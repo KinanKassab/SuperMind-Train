@@ -7,7 +7,8 @@
     "start": "npx http-server -p 8000 -o",
     "test": "open tests/run-tests.html",
     "serve": "python -m http.server 8000",
-    "build": "echo 'No build process needed - pure HTML/CSS/JS'",
+    "build": "node build.js",
+    "build:serve": "npm run build && npx http-server dist -p 8001 -o",
     "lint": "echo 'Linting not configured - using browser dev tools'"
   },
   "keywords": [
@@ -30,10 +31,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/KinanKassab/multiplication-trainer.git"
+    "url": "https://github.com/KinanKassab/SuperMind-Train.git"
   },
   "bugs": {
-    "url": "https://github.com/KinanKassab/multiplication-trainer/issues"
+    "url": "https://github.com/KinanKassab/SuperMind-Train/issues"
   },
-  "homepage": "https://github.com/KinanKassab/multiplication-trainer#readme"
+  "homepage": "https://github.com/KinanKassab/SuperMind-Train#readme"
 }

@@ -3,13 +3,22 @@
  * Handles test flow, question management, and scoring
  */
 export class TestManager {
-    constructor(app) {
-        this.app = app;
+    constructor() {
+        this.app = null; // Will be set by dependency injection
         this.currentTest = null;
         this.currentQuestionIndex = 0;
         this.userAnswers = [];
         this.testStartTime = null;
         this.questionStartTime = null;
+        this.isNavigating = false; // Flag to prevent multiple navigation calls
+    }
+    
+    /**
+     * Set app reference (dependency injection)
+     * @param {Object} app - App instance
+     */
+    setApp(app) {
+        this.app = app;
     }
     
     /**
@@ -17,6 +26,9 @@ export class TestManager {
      * @param {Object} settings - Test settings
      */
     startTest(settings) {
+        // Cleanup any existing test first
+        this.cleanup();
+        
         this.currentTest = {
             settings,
             questions: this.app.questionGenerator.generateTestQuestions(settings.questionCount),
@@ -27,6 +39,7 @@ export class TestManager {
         this.currentQuestionIndex = 0;
         this.userAnswers = [];
         this.testStartTime = Date.now();
+        this.isNavigating = false;
         
         // Start timer if enabled
         if (settings.timerMode !== 'off') {
@@ -83,6 +96,9 @@ export class TestManager {
             return;
         }
         
+        // Reset navigation flag when showing new question
+        this.isNavigating = false;
+        
         const question = this.currentTest.questions[this.currentQuestionIndex];
         this.questionStartTime = Date.now();
         
@@ -106,6 +122,9 @@ export class TestManager {
      * Enable answer buttons
      */
     enableAnswerButtons() {
+        // First remove any existing listeners to prevent duplicates
+        this.removeEventListeners();
+        
         const answerButtons = document.querySelectorAll('.answer-btn');
         answerButtons.forEach((btn, index) => {
             btn.addEventListener('click', () => this.selectAnswer(index));
@@ -117,7 +136,10 @@ export class TestManager {
      * @param {number} answerIndex - Index of selected answer
      */
     selectAnswer(answerIndex) {
-        if (!this.currentTest) return;
+        if (!this.currentTest || this.isNavigating) return;
+        
+        // Set navigation flag immediately to prevent multiple calls
+        this.isNavigating = true;
         
         const question = this.currentTest.questions[this.currentQuestionIndex];
         const selectedAnswer = question.answers[answerIndex];
@@ -162,7 +184,7 @@ export class TestManager {
         // Auto-advance in practice mode
         if (this.currentTest.settings.testMode === 'practice') {
             setTimeout(() => {
-                if (this.canProceed()) {
+                if (this.currentQuestionIndex < this.currentTest.questions.length - 1) {
                     this.nextQuestion();
                 }
             }, 1500);
@@ -184,8 +206,20 @@ export class TestManager {
     disableAnswerButtons() {
         const answerButtons = document.querySelectorAll('.answer-btn');
         answerButtons.forEach(btn => {
-            btn.disabled = true;
-            btn.removeEventListener('click', this.selectAnswer);
+            // Remove event listeners by cloning
+            const newBtn = btn.cloneNode(true);
+            newBtn.disabled = true;
+            newBtn.className = btn.className;
+            newBtn.textContent = btn.textContent;
+            newBtn.setAttribute('data-answer', btn.getAttribute('data-answer'));
+            newBtn.setAttribute('aria-label', btn.getAttribute('aria-label'));
+            newBtn.setAttribute('role', 'button');
+            newBtn.setAttribute('tabindex', '-1');
+            newBtn.setAttribute('type', 'button');
+            newBtn.setAttribute('id', btn.getAttribute('id'));
+            newBtn.setAttribute('data-index', btn.getAttribute('data-index'));
+            newBtn.setAttribute('data-question', btn.getAttribute('data-question'));
+            btn.parentNode.replaceChild(newBtn, btn);
         });
     }
     
@@ -193,6 +227,13 @@ export class TestManager {
      * Move to next question
      */
     nextQuestion() {
+        // Prevent multiple rapid calls
+        if (this.isNavigating) {
+            return;
+        }
+        
+        this.isNavigating = true;
+        
         this.currentQuestionIndex++;
         
         if (this.currentQuestionIndex >= this.currentTest.questions.length) {
@@ -200,6 +241,11 @@ export class TestManager {
         } else {
             this.showCurrentQuestion();
         }
+        
+        // Reset navigation flag after a short delay
+        setTimeout(() => {
+            this.isNavigating = false;
+        }, 100);
     }
     
     /**
@@ -290,7 +336,8 @@ export class TestManager {
      * @returns {boolean} True if can proceed
      */
     canProceed() {
-        return this.currentQuestionIndex < this.currentTest.questions.length - 1;
+        if (!this.currentTest) return false;
+        return this.currentQuestionIndex < this.currentTest.questions.length;
     }
     
     /**
@@ -316,5 +363,48 @@ export class TestManager {
             correctAnswers: results.correctCount,
             incorrectAnswers: results.incorrectCount
         };
+    }
+    
+    /**
+     * Cleanup test resources
+     */
+    cleanup() {
+        if (this.app && this.app.timer) {
+            this.app.timer.stop();
+        }
+        
+        // Clear test data
+        this.currentTest = null;
+        this.currentQuestionIndex = 0;
+        this.userAnswers = [];
+        this.testStartTime = null;
+        this.questionStartTime = null;
+        this.isNavigating = false; // Reset navigation flag
+        
+        // Remove event listeners
+        this.removeEventListeners();
+    }
+    
+    /**
+     * Remove event listeners to prevent memory leaks
+     */
+    removeEventListeners() {
+        const answerButtons = document.querySelectorAll('.answer-btn');
+        answerButtons.forEach(btn => {
+            // Clone the button to remove all event listeners
+            const newBtn = btn.cloneNode(true);
+            newBtn.disabled = btn.disabled;
+            newBtn.className = btn.className;
+            newBtn.textContent = btn.textContent;
+            newBtn.setAttribute('data-answer', btn.getAttribute('data-answer'));
+            newBtn.setAttribute('aria-label', btn.getAttribute('aria-label'));
+            newBtn.setAttribute('role', 'button');
+            newBtn.setAttribute('tabindex', btn.getAttribute('tabindex'));
+            newBtn.setAttribute('type', 'button');
+            newBtn.setAttribute('id', btn.getAttribute('id'));
+            newBtn.setAttribute('data-index', btn.getAttribute('data-index'));
+            newBtn.setAttribute('data-question', btn.getAttribute('data-question'));
+            btn.parentNode.replaceChild(newBtn, btn);
+        });
     }
 }

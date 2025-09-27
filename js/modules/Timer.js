@@ -44,6 +44,9 @@ export class Timer {
             this.timerId = null;
         }
         this.isRunning = false;
+        // Clear callbacks to prevent memory leaks
+        this.onTick = null;
+        this.onComplete = null;
     }
     
     /**

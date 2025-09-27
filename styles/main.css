@@ -5,6 +5,15 @@
     box-sizing: border-box;
 }
 
+/* RTL Support */
+[dir="rtl"] {
+    text-align: right;
+}
+
+[dir="ltr"] {
+    text-align: left;
+}
+
 :root {
     /* Light theme colors */
     --primary-color: #4f46e5;
@@ -54,6 +63,8 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
+    direction: rtl;
+    text-align: right;
 }
 
 /* Container */
@@ -77,6 +88,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-direction: row-reverse;
 }
 
 .logo {
@@ -89,6 +101,7 @@ body {
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    flex-direction: row-reverse;
 }
 
 /* Buttons */
@@ -167,6 +180,7 @@ body {
     text-align: center;
     max-width: 800px;
     margin: 0 auto;
+    direction: rtl;
 }
 
 .welcome-content h2 {
@@ -638,13 +652,23 @@ input:checked + .toggle-label:before {
 .entry-date {
     font-size: 0.875rem;
     color: var(--text-secondary);
-    margin-left: 1rem;
+    margin-right: 1rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
         padding: 0 0.5rem;
+    }
+    
+    .header .container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .header-controls {
+        flex-direction: row;
+        justify-content: center;
     }
     
     .welcome-content h2 {
@@ -696,6 +720,11 @@ input:checked + .toggle-label:before {
     #score-percentage {
         font-size: 2rem;
     }
+    
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -714,7 +743,7 @@ input:checked + .toggle-label:before {
     }
     
     .entry-date {
-        margin-left: 0;
+        margin-right: 0;
     }
 }
 
@@ -766,9 +795,34 @@ input:checked + .toggle-label:before {
 /* Focus styles */
 .btn:focus-visible,
 .answer-btn:focus-visible,
-.mode-btn:focus-visible {
+.mode-btn:focus-visible,
+.setting-group input:focus-visible,
+.setting-group select:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+/* Improved button states */
+.btn:active,
+.answer-btn:active,
+.mode-btn:active {
+    transform: translateY(1px);
+}
+
+/* Better hover states */
+.answer-btn:hover:not(:disabled) {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    background-color: var(--bg-primary);
+}
+
+.mode-btn:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background-color: var(--bg-primary);
 }
 
 /* High contrast mode support */
@@ -782,4 +836,169 @@ input:checked + .toggle-label:before {
         --border-color: #ffffff;
         --text-secondary: #ffffff;
     }
+}
+
+/* Additional improvements */
+.screen {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Better spacing for Arabic text */
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+}
+
+p {
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+/* Improved form elements */
+.setting-group input,
+.setting-group select {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.setting-group input:hover,
+.setting-group select:hover {
+    border-color: var(--primary-color);
+}
+
+/* Better modal positioning */
+.modal {
+    padding: 1rem;
+}
+
+.modal-content {
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Improved timer display */
+.timer-display {
+    transition: all 0.3s ease;
+}
+
+.timer-display.warning {
+    background-color: var(--error-color);
+    color: white;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Better progress bar */
+.progress-fill {
+    background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+    transition: width 0.5s ease;
+}
+
+/* Improved answer feedback */
+.answer-btn.correct {
+    animation: correctPulse 0.6s ease;
+}
+
+.answer-btn.incorrect {
+    animation: incorrectShake 0.6s ease;
+}
+
+@keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes incorrectShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Notification animations */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Loading spinner */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-content {
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.loading-content p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Progress indicator */
+.progress-container {
+    text-align: center;
+}
+
+.progress-container .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.progress-container .progress-fill {
+    height: 100%;
+    background: var(--primary-color);
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-container .progress-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
 }

@@ -125,8 +125,21 @@
                 results.textContent = 'Loading test file...';
                 
                 try {
-                    const { default: testCode } = await import('./test-question-generator.js');
-                    results.textContent = 'Tests completed successfully!';
+                    // Capture console output
+                    const originalLog = console.log;
+                    let testOutput = '';
+                    console.log = (...args) => {
+                        testOutput += args.join(' ') + '\n';
+                        originalLog(...args);
+                    };
+                    
+                    // Import and run the test file
+                    await import('./test-question-generator.js');
+                    
+                    // Restore console.log
+                    console.log = originalLog;
+                    
+                    results.textContent = testOutput || 'Tests completed successfully!';
                 } catch (error) {
                     results.textContent = `Error running tests: ${error.message}`;
                 }
@@ -145,8 +158,21 @@
                 results.textContent = 'Loading test file...';
                 
                 try {
-                    const { default: testCode } = await import('./test-timer.js');
-                    results.textContent = 'Tests completed successfully!';
+                    // Capture console output
+                    const originalLog = console.log;
+                    let testOutput = '';
+                    console.log = (...args) => {
+                        testOutput += args.join(' ') + '\n';
+                        originalLog(...args);
+                    };
+                    
+                    // Import and run the test file
+                    await import('./test-timer.js');
+                    
+                    // Restore console.log
+                    console.log = originalLog;
+                    
+                    results.textContent = testOutput || 'Tests completed successfully!';
                 } catch (error) {
                     results.textContent = `Error running tests: ${error.message}`;
                 }
@@ -165,8 +191,21 @@
                 results.textContent = 'Loading test file...';
                 
                 try {
-                    const { default: testCode } = await import('./test-storage.js');
-                    results.textContent = 'Tests completed successfully!';
+                    // Capture console output
+                    const originalLog = console.log;
+                    let testOutput = '';
+                    console.log = (...args) => {
+                        testOutput += args.join(' ') + '\n';
+                        originalLog(...args);
+                    };
+                    
+                    // Import and run the test file
+                    await import('./test-storage.js');
+                    
+                    // Restore console.log
+                    console.log = originalLog;
+                    
+                    results.textContent = testOutput || 'Tests completed successfully!';
                 } catch (error) {
                     results.textContent = `Error running tests: ${error.message}`;
                 }

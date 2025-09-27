@@ -14,10 +14,14 @@ export class Accessibility {
      * Initialize accessibility features
      */
     init() {
-        this.setupKeyboardNavigation();
-        this.setupARIA();
-        this.setupFocusManagement();
-        this.setupScreenReaderSupport();
+        try {
+            this.setupKeyboardNavigation();
+            this.setupARIA();
+            this.setupFocusManagement();
+            this.setupScreenReaderSupport();
+        } catch (error) {
+            console.warn('Accessibility initialization failed:', error);
+        }
     }
     
     /**
@@ -339,41 +343,28 @@ export class Accessibility {
      * Setup dynamic announcements
      */
     setupDynamicAnnouncements() {
-        // Announce question changes
-        const questionObserver = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                    const target = mutation.target;
-                    if (target.id === 'question-text') {
-                        this.announce(`سؤال جديد: ${target.textContent}`, 'status');
+        // Simplified announcements - only for critical changes
+        try {
+            // Announce question changes
+            const questionObserver = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                        const target = mutation.target;
+                        if (target.id === 'question-text') {
+                            this.announce(`سؤال جديد: ${target.textContent}`, 'status');
+                        }
                     }
-                }
+                });
             });
-        });
-        
-        questionObserver.observe(document.body, {
-            childList: true,
-            subtree: true,
-            characterData: true
-        });
-        
-        // Announce timer changes
-        const timerObserver = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'characterData' && mutation.target.id === 'timer-text') {
-                    const time = mutation.target.textContent;
-                    if (time === '00:10' || time === '00:05') {
-                        this.announce(`تحذير: ${time} متبقي`, 'timer');
-                    }
-                }
+            
+            questionObserver.observe(document.body, {
+                childList: true,
+                subtree: true,
+                characterData: true
             });
-        });
-        
-        timerObserver.observe(document.body, {
-            childList: true,
-            subtree: true,
-            characterData: true
-        });
+        } catch (error) {
+            console.warn('Dynamic announcements setup failed:', error);
+        }
     }
     
     /**

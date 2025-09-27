@@ -35,13 +35,8 @@ export class SoundManager {
         audio.preload = 'auto';
         audio.volume = 0.5;
         
-        // Generate simple beep sounds using Web Audio API
-        if (type === 'correct') {
-            this.generateCorrectSound(audio);
-        } else if (type === 'incorrect') {
-            this.generateIncorrectSound(audio);
-        }
-        
+        // Use Web Audio API to generate sounds directly
+        // No need for external files
         return audio;
     }
     
@@ -107,12 +102,7 @@ export class SoundManager {
         if (!this.enabled) return;
         
         try {
-            if (this.sounds.correct) {
-                this.sounds.correct.currentTime = 0;
-                this.sounds.correct.play().catch(error => {
-                    console.warn('Failed to play correct sound:', error);
-                });
-            }
+            this.playToneSequence([800, 1000, 1200], [0.1, 0.1, 0.2]);
         } catch (error) {
             console.warn('Sound playback failed:', error);
         }
@@ -125,12 +115,7 @@ export class SoundManager {
         if (!this.enabled) return;
         
         try {
-            if (this.sounds.incorrect) {
-                this.sounds.incorrect.currentTime = 0;
-                this.sounds.incorrect.play().catch(error => {
-                    console.warn('Failed to play incorrect sound:', error);
-                });
-            }
+            this.playToneSequence([300, 200], [0.1, 0.1]);
         } catch (error) {
             console.warn('Sound playback failed:', error);
         }

@@ -14,7 +14,8 @@ class App {
         this.storage = new Storage();
         this.soundManager = new SoundManager();
         this.ui = new UI();
-        this.testManager = new TestManager(this);
+        this.testManager = new TestManager();
+        this.testManager.setApp(this);
         this.accessibility = new Accessibility();
         
         this.currentSettings = {
@@ -30,10 +31,15 @@ class App {
     }
     
     init() {
-        this.loadSettings();
-        this.setupEventListeners();
-        this.updateQuickStats();
-        this.applyTheme();
+        try {
+            this.loadSettings();
+            this.setupEventListeners();
+            this.updateQuickStats();
+            this.applyTheme();
+        } catch (error) {
+            console.error('Failed to initialize app:', error);
+            this.showError('فشل في تهيئة التطبيق. يرجى إعادة تحميل الصفحة.');
+        }
     }
     
     loadSettings() {
@@ -77,8 +83,11 @@ class App {
         });
         
         // Test controls
-        document.getElementById('next-question').addEventListener('click', () => {
-            this.testManager.nextQuestion();
+        document.getElementById('next-question').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (this.testManager.canProceed()) {
+                this.testManager.nextQuestion();
+            }
         });
         
         document.getElementById('end-test').addEventListener('click', () => {
@@ -118,12 +127,14 @@ class App {
         if (this.ui.currentScreen === 'test-screen') {
             // Answer selection with number keys
             if (e.key >= '1' && e.key <= '4') {
+                e.preventDefault();
                 const answerIndex = parseInt(e.key) - 1;
                 this.testManager.selectAnswer(answerIndex);
             }
             
             // Enter to confirm/next
             if (e.key === 'Enter') {
+                e.preventDefault();
                 if (this.testManager.canProceed()) {
                     this.testManager.nextQuestion();
                 }
@@ -131,6 +142,7 @@ class App {
             
             // N for next
             if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
                 if (this.testManager.canProceed()) {
                     this.testManager.nextQuestion();
                 }
@@ -232,11 +244,56 @@ class App {
     
     showAnswerReview() {
         // Implementation for answer review modal
-        console.log('Showing answer review...');
+        // TODO: Implement answer review functionality
+        this.ui.showNotification('مراجعة الإجابات قريباً', 'info');
+    }
+    
+    /**
+     * Show error message to user
+     * @param {string} message - Error message
+     */
+    showError(message) {
+        this.ui.showNotification(message, 'error');
+    }
+    
+    /**
+     * Handle global errors
+     * @param {Error} error - Error object
+     */
+    handleGlobalError(error) {
+        console.error('Global error:', error);
+        this.showError('حدث خطأ غير متوقع. يرجى إعادة تحميل الصفحة.');
     }
 }
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.app = new App();
+    try {
+        window.app = new App();
+    } catch (error) {
+        console.error('Failed to initialize app:', error);
+        // Show fallback error message
+        document.body.innerHTML = `
+            <div style="text-align: center; padding: 2rem; font-family: Arial, sans-serif;">
+                <h1>خطأ في تحميل التطبيق</h1>
+                <p>حدث خطأ أثناء تحميل التطبيق. يرجى إعادة تحميل الصفحة.</p>
+                <button onclick="location.reload()" style="padding: 0.5rem 1rem; margin-top: 1rem;">
+                    إعادة تحميل الصفحة
+                </button>
+            </div>
+        `;
+    }
+});
+
+// Global error handling
+window.addEventListener('error', (event) => {
+    if (window.app && window.app.handleGlobalError) {
+        window.app.handleGlobalError(event.error);
+    }
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+    if (window.app && window.app.handleGlobalError) {
+        window.app.handleGlobalError(event.reason);
+    }
 });

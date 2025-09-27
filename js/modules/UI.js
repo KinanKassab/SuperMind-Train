@@ -187,9 +187,20 @@ export class UI {
         // Update answer buttons
         const answerButtons = document.querySelectorAll('.answer-btn');
         answerButtons.forEach((btn, index) => {
-            btn.textContent = question.answers[index];
-            btn.className = 'answer-btn';
-            btn.disabled = false;
+            // Remove any existing event listeners by cloning
+            const newBtn = btn.cloneNode(true);
+            newBtn.textContent = question.answers[index];
+            newBtn.className = 'answer-btn';
+            newBtn.disabled = false;
+            newBtn.setAttribute('data-answer', question.answers[index]);
+            newBtn.setAttribute('aria-label', `الإجابة ${index + 1}: ${question.answers[index]}`);
+            newBtn.setAttribute('role', 'button');
+            newBtn.setAttribute('tabindex', '0');
+            newBtn.setAttribute('type', 'button');
+            newBtn.setAttribute('id', `answer-${index}`);
+            newBtn.setAttribute('data-index', index);
+            newBtn.setAttribute('data-question', questionNumber);
+            btn.parentNode.replaceChild(newBtn, btn);
         });
     }
     
@@ -201,8 +212,14 @@ export class UI {
     updateProgress(current, total) {
         const percentage = (current / total) * 100;
         const progressFill = document.getElementById('progress-fill');
+        const progressBar = document.querySelector('.progress-bar');
+        
         if (progressFill) {
             progressFill.style.width = `${percentage}%`;
+        }
+        
+        if (progressBar) {
+            progressBar.setAttribute('aria-valuenow', Math.round(percentage));
         }
     }
     
@@ -212,6 +229,7 @@ export class UI {
      */
     updateTimer(seconds) {
         const timerText = document.getElementById('timer-text');
+        const timerDisplay = document.getElementById('timer-display');
         if (timerText) {
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
@@ -220,8 +238,14 @@ export class UI {
             // Add warning class when time is low
             if (seconds <= 10) {
                 timerText.classList.add('warning');
+                if (timerDisplay) {
+                    timerDisplay.classList.add('warning');
+                }
             } else {
                 timerText.classList.remove('warning');
+                if (timerDisplay) {
+                    timerDisplay.classList.remove('warning');
+                }
             }
         }
     }
@@ -238,10 +262,17 @@ export class UI {
             const answer = parseInt(btn.textContent);
             btn.disabled = true;
             
+            // Remove any existing classes first
+            btn.classList.remove('selected', 'correct', 'incorrect');
+            
             if (answer === correctAnswer) {
                 btn.classList.add('correct');
+                // Add ARIA label for screen readers
+                btn.setAttribute('aria-label', 'الإجابة الصحيحة');
             } else if (btn.classList.contains('selected')) {
                 btn.classList.add('incorrect');
+                // Add ARIA label for screen readers
+                btn.setAttribute('aria-label', 'إجابة خاطئة');
             }
         });
     }
@@ -356,26 +387,43 @@ export class UI {
         notification.className = `notification notification-${type}`;
         notification.textContent = message;
         
-        // Style the notification
+        // Style the notification based on type
+        const colors = {
+            success: { bg: '#10b981', color: 'white' },
+            error: { bg: '#ef4444', color: 'white' },
+            info: { bg: 'var(--bg-secondary)', color: 'var(--text-primary)' },
+            warning: { bg: '#f59e0b', color: 'white' }
+        };
+        
+        const colorScheme = colors[type] || colors.info;
+        
         notification.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            padding: 1rem;
+            background: ${colorScheme.bg};
+            color: ${colorScheme.color};
+            padding: 1rem 1.5rem;
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-lg);
             z-index: 1000;
             animation: slideIn 0.3s ease;
+            max-width: 300px;
+            border-left: 4px solid ${colorScheme.bg};
         `;
         
         document.body.appendChild(notification);
         
-        // Remove after 3 seconds
+        // Remove after appropriate time based on type
+        const duration = type === 'error' ? 5000 : 3000;
         setTimeout(() => {
-            notification.remove();
-        }, 3000);
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }, duration);
     }
     
     /**
@@ -385,5 +433,102 @@ export class UI {
      */
     t(key) {
         return this.translations[this.language][key] || key;
+    }
+    
+    /**
+     * Show loading state
+     * @param {string} message - Loading message
+     */
+    showLoading(message = 'جاري التحميل...') {
+        const loading = document.createElement('div');
+        loading.id = 'loading-overlay';
+        loading.innerHTML = `
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p>${message}</p>
+            </div>
+        `;
+        
+        loading.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        `;
+        
+        document.body.appendChild(loading);
+    }
+    
+    /**
+     * Hide loading state
+     */
+    hideLoading() {
+        const loading = document.getElementById('loading-overlay');
+        if (loading) {
+            loading.remove();
+        }
+    }
+    
+    /**
+     * Show progress indicator
+     * @param {number} progress - Progress percentage (0-100)
+     * @param {string} message - Progress message
+     */
+    showProgress(progress, message = '') {
+        let progressBar = document.getElementById('progress-indicator');
+        if (!progressBar) {
+            progressBar = document.createElement('div');
+            progressBar.id = 'progress-indicator';
+            progressBar.innerHTML = `
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="progress-text"></div>
+                </div>
+            `;
+            
+            progressBar.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: var(--bg-primary);
+                padding: 2rem;
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-lg);
+                z-index: 1500;
+                min-width: 300px;
+            `;
+            
+            document.body.appendChild(progressBar);
+        }
+        
+        const progressFill = progressBar.querySelector('.progress-fill');
+        const progressText = progressBar.querySelector('.progress-text');
+        
+        if (progressFill) {
+            progressFill.style.width = `${progress}%`;
+        }
+        
+        if (progressText) {
+            progressText.textContent = message;
+        }
+    }
+    
+    /**
+     * Hide progress indicator
+     */
+    hideProgress() {
+        const progressBar = document.getElementById('progress-indicator');
+        if (progressBar) {
+            progressBar.remove();
+        }
     }
 }

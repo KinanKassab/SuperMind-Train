@@ -19,10 +19,68 @@ export class Storage {
      */
     saveSettings(settings) {
         try {
-            localStorage.setItem(this.keys.settings, JSON.stringify(settings));
+            // Validate settings before saving
+            const validatedSettings = this.validateSettings(settings);
+            localStorage.setItem(this.keys.settings, JSON.stringify(validatedSettings));
         } catch (error) {
             console.error('Failed to save settings:', error);
+            throw new Error('فشل في حفظ الإعدادات');
         }
+    }
+    
+    /**
+     * Validate settings object
+     * @param {Object} settings - Settings to validate
+     * @returns {Object} Validated settings
+     */
+    validateSettings(settings) {
+        const defaults = {
+            questionCount: 10,
+            timerMode: 'off',
+            timerDuration: 30,
+            soundEnabled: true,
+            language: 'ar',
+            testMode: 'practice'
+        };
+        
+        const validated = { ...defaults };
+        
+        // Validate question count
+        if (typeof settings.questionCount === 'number' && 
+            settings.questionCount >= 1 && settings.questionCount <= 50) {
+            validated.questionCount = settings.questionCount;
+        }
+        
+        // Validate timer mode
+        if (typeof settings.timerMode === 'string' && 
+            ['off', 'per-question', 'total-time'].includes(settings.timerMode)) {
+            validated.timerMode = settings.timerMode;
+        }
+        
+        // Validate timer duration
+        if (typeof settings.timerDuration === 'number' && 
+            settings.timerDuration >= 5 && settings.timerDuration <= 300) {
+            validated.timerDuration = settings.timerDuration;
+        }
+        
+        // Validate sound enabled
+        if (typeof settings.soundEnabled === 'boolean') {
+            validated.soundEnabled = settings.soundEnabled;
+        }
+        
+        // Validate language
+        if (typeof settings.language === 'string' && 
+            ['ar', 'en'].includes(settings.language)) {
+            validated.language = settings.language;
+        }
+        
+        // Validate test mode
+        if (typeof settings.testMode === 'string' && 
+            ['practice', 'exam'].includes(settings.testMode)) {
+            validated.testMode = settings.testMode;
+        }
+        
+        return validated;
     }
     
     /**
@@ -45,11 +103,14 @@ export class Storage {
      */
     saveTestResults(results) {
         try {
+            // Validate results before saving
+            const validatedResults = this.validateTestResults(results);
+            
             const history = this.getTestHistory();
             const testResult = {
                 id: Date.now(),
                 timestamp: new Date().toISOString(),
-                ...results
+                ...validatedResults
             };
             
             history.unshift(testResult);
@@ -60,10 +121,71 @@ export class Storage {
             }
             
             localStorage.setItem(this.keys.history, JSON.stringify(history));
-            this.updateStats(results);
+            this.updateStats(validatedResults);
         } catch (error) {
             console.error('Failed to save test results:', error);
+            throw new Error('فشل في حفظ نتائج الاختبار');
         }
+    }
+    
+    /**
+     * Validate test results object
+     * @param {Object} results - Test results to validate
+     * @returns {Object} Validated results
+     */
+    validateTestResults(results) {
+        if (!results || typeof results !== 'object') {
+            throw new Error('نتائج الاختبار غير صحيحة');
+        }
+        
+        const validated = {};
+        
+        // Validate required fields
+        if (typeof results.totalQuestions === 'number' && results.totalQuestions > 0) {
+            validated.totalQuestions = results.totalQuestions;
+        } else {
+            throw new Error('عدد الأسئلة غير صحيح');
+        }
+        
+        if (typeof results.correctCount === 'number' && results.correctCount >= 0) {
+            validated.correctCount = results.correctCount;
+        } else {
+            throw new Error('عدد الإجابات الصحيحة غير صحيح');
+        }
+        
+        if (typeof results.incorrectCount === 'number' && results.incorrectCount >= 0) {
+            validated.incorrectCount = results.incorrectCount;
+        } else {
+            validated.incorrectCount = validated.totalQuestions - validated.correctCount;
+        }
+        
+        if (typeof results.scorePercentage === 'number' && 
+            results.scorePercentage >= 0 && results.scorePercentage <= 100) {
+            validated.scorePercentage = results.scorePercentage;
+        } else {
+            validated.scorePercentage = Math.round((validated.correctCount / validated.totalQuestions) * 100);
+        }
+        
+        if (typeof results.totalTime === 'number' && results.totalTime >= 0) {
+            validated.totalTime = results.totalTime;
+        } else {
+            validated.totalTime = 0;
+        }
+        
+        // Copy other valid fields
+        if (results.questions && Array.isArray(results.questions)) {
+            validated.questions = results.questions;
+        }
+        
+        if (results.userAnswers && Array.isArray(results.userAnswers)) {
+            validated.userAnswers = results.userAnswers;
+        }
+        
+        if (results.settings && typeof results.settings === 'object') {
+            validated.settings = results.settings;
+        }
+        
+        return validated;
     }
     
     /**

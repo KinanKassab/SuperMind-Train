@@ -1,4 +1,121 @@
-<!DOCTYPE html>
+#!/usr/bin/env node
+
+/**
+ * Simple build script for SuperMind-Train
+ * Handles minification and optimization
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+class BuildTool {
+    constructor() {
+        this.sourceDir = './js';
+        this.outputDir = './dist';
+        this.files = [];
+    }
+    
+    /**
+     * Minify JavaScript code (basic implementation)
+     * @param {string} code - JavaScript code
+     * @returns {string} Minified code
+     */
+    minifyJS(code) {
+        return code
+            .replace(/\/\*[\s\S]*?\*\//g, '') // Remove block comments
+            .replace(/\/\/.*$/gm, '') // Remove line comments
+            .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+            .replace(/\s*([{}();,=])\s*/g, '$1') // Remove spaces around operators
+            .trim();
+    }
+    
+    /**
+     * Minify CSS code (basic implementation)
+     * @param {string} code - CSS code
+     * @returns {string} Minified CSS
+     */
+    minifyCSS(code) {
+        return code
+            .replace(/\/\*[\s\S]*?\*\//g, '') // Remove comments
+            .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+            .replace(/\s*([{}:;,>+~])\s*/g, '$1') // Remove spaces around operators
+            .trim();
+    }
+    
+    /**
+     * Bundle JavaScript modules
+     */
+    async bundleJS() {
+        console.log('📦 Bundling JavaScript modules...');
+        
+        const modules = [
+            'modules/QuestionGenerator.js',
+            'modules/Timer.js',
+            'modules/Storage.js',
+            'modules/SoundManager.js',
+            'modules/UI.js',
+            'modules/TestManager.js',
+            'modules/Accessibility.js'
+        ];
+        
+        let bundledCode = '';
+        
+        for (const module of modules) {
+            const filePath = path.join(this.sourceDir, module);
+            if (fs.existsSync(filePath)) {
+                const content = fs.readFileSync(filePath, 'utf8');
+                bundledCode += `\n// ${module}\n${content}\n`;
+            }
+        }
+        
+        // Add main app code
+        const appPath = path.join(this.sourceDir, 'app.js');
+        if (fs.existsSync(appPath)) {
+            const appContent = fs.readFileSync(appPath, 'utf8');
+            bundledCode += `\n// app.js\n${appContent}\n`;
+        }
+        
+        // Create output directory
+        if (!fs.existsSync(this.outputDir)) {
+            fs.mkdirSync(this.outputDir, { recursive: true });
+        }
+        
+        // Write bundled file
+        const outputPath = path.join(this.outputDir, 'app.bundle.js');
+        fs.writeFileSync(outputPath, bundledCode);
+        
+        console.log(`✅ JavaScript bundled: ${outputPath}`);
+        return outputPath;
+    }
+    
+    /**
+     * Minify CSS
+     */
+    async minifyCSS() {
+        console.log('🎨 Minifying CSS...');
+        
+        const cssPath = './styles/main.css';
+        if (fs.existsSync(cssPath)) {
+            const cssContent = fs.readFileSync(cssPath, 'utf8');
+            const minifiedCSS = this.minifyCSS(cssContent);
+            
+            const outputPath = path.join(this.outputDir, 'main.min.css');
+            fs.writeFileSync(outputPath, minifiedCSS);
+            
+            console.log(`✅ CSS minified: ${outputPath}`);
+            return outputPath;
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Create optimized HTML
+     */
+    async createOptimizedHTML() {
+        console.log('📄 Creating optimized HTML...');
+        
+        const htmlTemplate = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +125,7 @@
     <meta name="author" content="SuperMind-Train">
     <meta name="robots" content="index, follow">
     <title>SuperMind-Train - تدريب سوبر مايند</title>
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="main.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -200,9 +317,42 @@
         </div>
     </main>
 
-    <!-- Audio Elements are generated programmatically by SoundManager -->
-
     <!-- Scripts -->
-    <script type="module" src="js/app.js"></script>
+    <script src="app.bundle.js"></script>
 </body>
-</html>
+</html>`;
+        
+        const outputPath = path.join(this.outputDir, 'index.html');
+        fs.writeFileSync(outputPath, htmlTemplate);
+        
+        console.log(`✅ Optimized HTML created: ${outputPath}`);
+        return outputPath;
+    }
+    
+    /**
+     * Run the build process
+     */
+    async build() {
+        console.log('🚀 Starting build process...');
+        
+        try {
+            await this.bundleJS();
+            await this.minifyCSS();
+            await this.createOptimizedHTML();
+            
+            console.log('✅ Build completed successfully!');
+            console.log('📁 Output directory:', this.outputDir);
+        } catch (error) {
+            console.error('❌ Build failed:', error);
+            process.exit(1);
+        }
+    }
+}
+
+// Run build if called directly
+if (require.main === module) {
+    const buildTool = new BuildTool();
+    buildTool.build();
+}
+
+module.exports = BuildTool;
