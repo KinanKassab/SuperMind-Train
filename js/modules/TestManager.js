@@ -163,32 +163,31 @@ export class TestManager {
         question.isCorrect = isCorrect;
         question.timeSpent = timeSpent;
         
-        // Show feedback
-        this.showAnswerFeedback(isCorrect, question.correctAnswer);
-        
-        // Play sound
-        if (this.app.soundManager.isEnabled()) {
-            if (isCorrect) {
-                this.app.soundManager.playCorrect();
-            } else {
-                this.app.soundManager.playIncorrect();
-            }
-        }
+        // Mark selected answer visually (without showing correct answer)
+        this.markSelectedAnswer(answerIndex);
         
         // Disable answer buttons
         this.disableAnswerButtons();
         
         // Enable next button
         document.getElementById('next-question').disabled = false;
+    }
+    
+    /**
+     * Mark selected answer visually (without showing correct answer)
+     * @param {number} answerIndex - Index of selected answer
+     */
+    markSelectedAnswer(answerIndex) {
+        const answerButtons = document.querySelectorAll('.answer-btn');
         
-        // Auto-advance in practice mode
-        if (this.currentTest.settings.testMode === 'practice') {
-            setTimeout(() => {
-                if (this.currentQuestionIndex < this.currentTest.questions.length - 1) {
-                    this.nextQuestion();
-                }
-            }, 1500);
-        }
+        answerButtons.forEach((btn, index) => {
+            btn.classList.remove('selected');
+            btn.removeAttribute('data-selected');
+            if (index === answerIndex) {
+                btn.classList.add('selected');
+                btn.setAttribute('data-selected', 'true');
+            }
+        });
     }
     
     /**
@@ -233,6 +232,38 @@ export class TestManager {
         }
         
         this.isNavigating = true;
+        
+        // Show feedback for current question before moving to next
+        if (this.currentTest && this.currentQuestionIndex < this.currentTest.questions.length) {
+            const currentQuestion = this.currentTest.questions[this.currentQuestionIndex];
+            if (currentQuestion.userAnswer !== undefined) {
+                this.showAnswerFeedback(currentQuestion.isCorrect, currentQuestion.correctAnswer);
+                
+                // Play sound feedback
+                if (this.app.soundManager.isEnabled()) {
+                    if (currentQuestion.isCorrect) {
+                        this.app.soundManager.playCorrect();
+                    } else {
+                        this.app.soundManager.playIncorrect();
+                    }
+                }
+                
+                // Wait a moment to show feedback before moving to next question
+                setTimeout(() => {
+                    this.currentQuestionIndex++;
+                    
+                    if (this.currentQuestionIndex >= this.currentTest.questions.length) {
+                        this.endTest();
+                    } else {
+                        this.showCurrentQuestion();
+                    }
+                    
+                    // Reset navigation flag
+                    this.isNavigating = false;
+                }, 1000); // Show feedback for 1 second
+                return;
+            }
+        }
         
         this.currentQuestionIndex++;
         
