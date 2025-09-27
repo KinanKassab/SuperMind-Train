@@ -138,12 +138,30 @@ export class TestManager {
     selectAnswer(answerIndex) {
         if (!this.currentTest || this.isNavigating) return;
         
-        // Set navigation flag immediately to prevent multiple calls
-        this.isNavigating = true;
-        
         const question = this.currentTest.questions[this.currentQuestionIndex];
         const selectedAnswer = question.answers[answerIndex];
-        const isCorrect = this.app.questionGenerator.validateAnswer(question, selectedAnswer);
+        
+        // Store selected answer temporarily (don't validate yet)
+        question.selectedAnswer = selectedAnswer;
+        question.selectedIndex = answerIndex;
+        
+        // Update UI to show selection
+        this.app.ui.showAnswerSelection(answerIndex);
+        
+        // Enable next button
+        document.getElementById('next-question').disabled = false;
+    }
+    
+    /**
+     * Process the selected answer and move to next question
+     */
+    processAnswer() {
+        if (!this.currentTest || this.isNavigating) return;
+        
+        const question = this.currentTest.questions[this.currentQuestionIndex];
+        if (!question.selectedAnswer) return;
+        
+        const isCorrect = this.app.questionGenerator.validateAnswer(question, question.selectedAnswer);
         
         // Calculate time spent on this question
         const timeSpent = this.app.questionGenerator.calculateTimeSpent({
@@ -153,20 +171,17 @@ export class TestManager {
         // Store user answer
         this.userAnswers.push({
             questionIndex: this.currentQuestionIndex,
-            userAnswer: selectedAnswer,
+            userAnswer: question.selectedAnswer,
             isCorrect,
             timeSpent
         });
         
         // Update question with user's answer
-        question.userAnswer = selectedAnswer;
+        question.userAnswer = question.selectedAnswer;
         question.isCorrect = isCorrect;
         question.timeSpent = timeSpent;
         
-        // Show feedback
-        this.showAnswerFeedback(isCorrect, question.correctAnswer);
-        
-        // Play sound
+        // Play sound feedback
         if (this.app.soundManager.isEnabled()) {
             if (isCorrect) {
                 this.app.soundManager.playCorrect();
@@ -174,53 +189,6 @@ export class TestManager {
                 this.app.soundManager.playIncorrect();
             }
         }
-        
-        // Disable answer buttons
-        this.disableAnswerButtons();
-        
-        // Enable next button
-        document.getElementById('next-question').disabled = false;
-        
-        // Auto-advance in practice mode
-        if (this.currentTest.settings.testMode === 'practice') {
-            setTimeout(() => {
-                if (this.currentQuestionIndex < this.currentTest.questions.length - 1) {
-                    this.nextQuestion();
-                }
-            }, 1500);
-        }
-    }
-    
-    /**
-     * Show answer feedback
-     * @param {boolean} isCorrect - Whether answer is correct
-     * @param {number} correctAnswer - Correct answer
-     */
-    showAnswerFeedback(isCorrect, correctAnswer) {
-        this.app.ui.showAnswerFeedback(isCorrect, correctAnswer);
-    }
-    
-    /**
-     * Disable answer buttons
-     */
-    disableAnswerButtons() {
-        const answerButtons = document.querySelectorAll('.answer-btn');
-        answerButtons.forEach(btn => {
-            // Remove event listeners by cloning
-            const newBtn = btn.cloneNode(true);
-            newBtn.disabled = true;
-            newBtn.className = btn.className;
-            newBtn.textContent = btn.textContent;
-            newBtn.setAttribute('data-answer', btn.getAttribute('data-answer'));
-            newBtn.setAttribute('aria-label', btn.getAttribute('aria-label'));
-            newBtn.setAttribute('role', 'button');
-            newBtn.setAttribute('tabindex', '-1');
-            newBtn.setAttribute('type', 'button');
-            newBtn.setAttribute('id', btn.getAttribute('id'));
-            newBtn.setAttribute('data-index', btn.getAttribute('data-index'));
-            newBtn.setAttribute('data-question', btn.getAttribute('data-question'));
-            btn.parentNode.replaceChild(newBtn, btn);
-        });
     }
     
     /**
@@ -233,6 +201,9 @@ export class TestManager {
         }
         
         this.isNavigating = true;
+        
+        // Process current answer before moving to next
+        this.processAnswer();
         
         this.currentQuestionIndex++;
         

@@ -190,7 +190,7 @@ export class UI {
             // Remove any existing event listeners by cloning
             const newBtn = btn.cloneNode(true);
             newBtn.textContent = question.answers[index];
-            newBtn.className = 'answer-btn';
+            newBtn.className = 'answer-btn'; // Reset to default class
             newBtn.disabled = false;
             newBtn.setAttribute('data-answer', question.answers[index]);
             newBtn.setAttribute('aria-label', `الإجابة ${index + 1}: ${question.answers[index]}`);
@@ -202,6 +202,9 @@ export class UI {
             newBtn.setAttribute('data-question', questionNumber);
             btn.parentNode.replaceChild(newBtn, btn);
         });
+        
+        // Reset next button
+        document.getElementById('next-question').disabled = true;
     }
     
     /**
@@ -251,28 +254,22 @@ export class UI {
     }
     
     /**
-     * Show answer feedback
-     * @param {boolean} isCorrect - Whether answer is correct
-     * @param {number} correctAnswer - Correct answer
+     * Show answer selection (highlight selected answer)
+     * @param {number} selectedIndex - Index of selected answer
      */
-    showAnswerFeedback(isCorrect, correctAnswer) {
+    showAnswerSelection(selectedIndex) {
         const answerButtons = document.querySelectorAll('.answer-btn');
         
-        answerButtons.forEach(btn => {
-            const answer = parseInt(btn.textContent);
-            btn.disabled = true;
+        answerButtons.forEach((btn, index) => {
+            // Remove previous selection
+            btn.classList.remove('selected');
             
-            // Remove any existing classes first
-            btn.classList.remove('selected', 'correct', 'incorrect');
-            
-            if (answer === correctAnswer) {
-                btn.classList.add('correct');
-                // Add ARIA label for screen readers
-                btn.setAttribute('aria-label', 'الإجابة الصحيحة');
-            } else if (btn.classList.contains('selected')) {
-                btn.classList.add('incorrect');
-                // Add ARIA label for screen readers
-                btn.setAttribute('aria-label', 'إجابة خاطئة');
+            // Add selection to clicked button
+            if (index === selectedIndex) {
+                btn.classList.add('selected');
+                btn.setAttribute('aria-label', `الإجابة المختارة: ${btn.textContent}`);
+            } else {
+                btn.setAttribute('aria-label', `الإجابة ${index + 1}: ${btn.textContent}`);
             }
         });
     }
