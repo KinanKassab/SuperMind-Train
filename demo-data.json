@@ -1,0 +1,89 @@
+{
+  "sampleTests": [
+    {
+      "name": "اختبار سريع - 5 أسئلة",
+      "settings": {
+        "questionCount": 5,
+        "timerMode": "off",
+        "timerDuration": 30,
+        "soundEnabled": true,
+        "language": "ar",
+        "testMode": "practice"
+      }
+    },
+    {
+      "name": "اختبار متوسط - 10 أسئلة مع مؤقت",
+      "settings": {
+        "questionCount": 10,
+        "timerMode": "per-question",
+        "timerDuration": 15,
+        "soundEnabled": true,
+        "language": "ar",
+        "testMode": "exam"
+      }
+    },
+    {
+      "name": "اختبار صعب - 20 سؤال مع زمن إجمالي",
+      "settings": {
+        "questionCount": 20,
+        "timerMode": "total-time",
+        "timerDuration": 300,
+        "soundEnabled": false,
+        "language": "ar",
+        "testMode": "exam"
+      }
+    }
+  ],
+  "sampleLeaderboard": [
+    {
+      "name": "أحمد محمد",
+      "score": 100,
+      "time": 120,
+      "date": "2024-01-15T10:30:00Z"
+    },
+    {
+      "name": "فاطمة علي",
+      "score": 95,
+      "time": 150,
+      "date": "2024-01-15T11:15:00Z"
+    },
+    {
+      "name": "محمد حسن",
+      "score": 90,
+      "time": 180,
+      "date": "2024-01-15T12:00:00Z"
+    },
+    {
+      "name": "نور الدين",
+      "score": 85,
+      "time": 200,
+      "date": "2024-01-15T13:30:00Z"
+    },
+    {
+      "name": "سارة أحمد",
+      "score": 80,
+      "time": 220,
+      "date": "2024-01-15T14:45:00Z"
+    }
+  ],
+  "sampleQuestions": [
+    {
+      "factorA": 3,
+      "factorB": 7,
+      "correctAnswer": 21,
+      "distractors": [18, 24, 28]
+    },
+    {
+      "factorA": 6,
+      "factorB": 9,
+      "correctAnswer": 54,
+      "distractors": [48, 56, 60]
+    },
+    {
+      "factorA": 4,
+      "factorB": 12,
+      "correctAnswer": 48,
+      "distractors": [44, 52, 56]
+    }
+  ]
+}

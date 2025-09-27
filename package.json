@@ -1,0 +1,39 @@
+{
+  "name": "multiplication-trainer",
+  "version": "1.0.0",
+  "description": "A complete Arabic multiplication trainer web application with RTL support",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 8000 -o",
+    "test": "open tests/run-tests.html",
+    "serve": "python -m http.server 8000",
+    "build": "echo 'No build process needed - pure HTML/CSS/JS'",
+    "lint": "echo 'Linting not configured - using browser dev tools'"
+  },
+  "keywords": [
+    "multiplication",
+    "education",
+    "arabic",
+    "rtl",
+    "math",
+    "training",
+    "quiz",
+    "accessibility"
+  ],
+  "author": "SuperMind-Train",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KinanKassab/multiplication-trainer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KinanKassab/multiplication-trainer/issues"
+  },
+  "homepage": "https://github.com/KinanKassab/multiplication-trainer#readme"
+}
