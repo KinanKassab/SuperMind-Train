@@ -1,5 +1,5 @@
 {
-  "name": "multiplication-trainer",
+  "name": "SuperMind-Train",
   "version": "1.0.0",
   "description": "A complete Arabic multiplication trainer web application with RTL support",
   "main": "index.html",

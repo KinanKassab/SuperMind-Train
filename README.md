@@ -1,4 +1,4 @@
-# مدرّب الضرب - Multiplication Trainer 🚀
+# SuperMind-Train - تدريب سوبر مايند 🚀
 
 A complete, production-ready, responsive web application for training students on multiplication with Arabic UI support.
 
@@ -253,4 +253,4 @@ For issues, questions, or contributions:
 
 ---
 
-**مدرّب الضرب** - Making multiplication learning fun and effective! 🎯
+**SuperMind-Train - تدريب سوبر مايند** - Making multiplication learning fun and effective! 🎯
