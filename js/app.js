@@ -125,27 +125,11 @@ class App {
     
     handleKeyboardShortcuts(e) {
         if (this.ui.currentScreen === 'test-screen') {
-            // Answer selection with number keys
+            // Answer selection with number keys only; do not auto-advance
             if (e.key >= '1' && e.key <= '4') {
                 e.preventDefault();
                 const answerIndex = parseInt(e.key) - 1;
                 this.testManager.selectAnswer(answerIndex);
-            }
-            
-            // Enter to confirm/next
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                if (this.testManager.canProceed()) {
-                    this.testManager.nextQuestion();
-                }
-            }
-            
-            // N for next
-            if (e.key === 'n' || e.key === 'N') {
-                e.preventDefault();
-                if (this.testManager.canProceed()) {
-                    this.testManager.nextQuestion();
-                }
             }
         }
         

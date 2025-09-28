@@ -200,7 +200,6 @@ export class UI {
             newBtn.setAttribute('id', `answer-${index}`);
             newBtn.setAttribute('data-index', index);
             newBtn.setAttribute('data-question', questionNumber);
-            newBtn.removeAttribute('data-selected'); // Remove any previous selection marker
             btn.parentNode.replaceChild(newBtn, btn);
         });
     }
@@ -270,7 +269,7 @@ export class UI {
                 btn.classList.add('correct');
                 // Add ARIA label for screen readers
                 btn.setAttribute('aria-label', 'الإجابة الصحيحة');
-            } else if (btn.classList.contains('selected') || btn.getAttribute('data-selected') === 'true') {
+            } else if (btn.classList.contains('selected')) {
                 btn.classList.add('incorrect');
                 // Add ARIA label for screen readers
                 btn.setAttribute('aria-label', 'إجابة خاطئة');

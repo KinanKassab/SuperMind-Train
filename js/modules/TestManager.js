@@ -11,6 +11,8 @@ export class TestManager {
         this.testStartTime = null;
         this.questionStartTime = null;
         this.isNavigating = false; // Flag to prevent multiple navigation calls
+        this.selectedAnswerIndex = null; // Track current selection
+        this.timedOutCurrent = false; // Track per-question timeout state
     }
     
     /**
@@ -40,6 +42,8 @@ export class TestManager {
         this.userAnswers = [];
         this.testStartTime = Date.now();
         this.isNavigating = false;
+        this.selectedAnswerIndex = null;
+        this.timedOutCurrent = false;
         
         // Start timer if enabled
         if (settings.timerMode !== 'off') {
@@ -98,6 +102,8 @@ export class TestManager {
         
         // Reset navigation flag when showing new question
         this.isNavigating = false;
+        this.selectedAnswerIndex = null;
+        this.timedOutCurrent = false;
         
         const question = this.currentTest.questions[this.currentQuestionIndex];
         this.questionStartTime = Date.now();
@@ -114,8 +120,9 @@ export class TestManager {
         // Enable answer buttons
         this.enableAnswerButtons();
         
-        // Disable next button
-        document.getElementById('next-question').disabled = true;
+        // Disable next button until user selects an answer or time runs out
+        const nextBtn = document.getElementById('next-question');
+        if (nextBtn) nextBtn.disabled = true;
     }
     
     /**
@@ -136,58 +143,25 @@ export class TestManager {
      * @param {number} answerIndex - Index of selected answer
      */
     selectAnswer(answerIndex) {
-        if (!this.currentTest || this.isNavigating) return;
+        if (!this.currentTest || this.isNavigating || this.timedOutCurrent) return;
         
-        // Set navigation flag immediately to prevent multiple calls
-        this.isNavigating = true;
-        
-        const question = this.currentTest.questions[this.currentQuestionIndex];
-        const selectedAnswer = question.answers[answerIndex];
-        const isCorrect = this.app.questionGenerator.validateAnswer(question, selectedAnswer);
-        
-        // Calculate time spent on this question
-        const timeSpent = this.app.questionGenerator.calculateTimeSpent({
-            startTime: this.questionStartTime
-        });
-        
-        // Store user answer
-        this.userAnswers.push({
-            questionIndex: this.currentQuestionIndex,
-            userAnswer: selectedAnswer,
-            isCorrect,
-            timeSpent
-        });
-        
-        // Update question with user's answer
-        question.userAnswer = selectedAnswer;
-        question.isCorrect = isCorrect;
-        question.timeSpent = timeSpent;
-        
-        // Mark selected answer visually (without showing correct answer)
-        this.markSelectedAnswer(answerIndex);
-        
-        // Disable answer buttons
-        this.disableAnswerButtons();
-        
-        // Enable next button
-        document.getElementById('next-question').disabled = false;
-    }
-    
-    /**
-     * Mark selected answer visually (without showing correct answer)
-     * @param {number} answerIndex - Index of selected answer
-     */
-    markSelectedAnswer(answerIndex) {
+        // Update selected answer index and button styles (allow change before next)
+        this.selectedAnswerIndex = answerIndex;
         const answerButtons = document.querySelectorAll('.answer-btn');
-        
-        answerButtons.forEach((btn, index) => {
-            btn.classList.remove('selected');
-            btn.removeAttribute('data-selected');
-            if (index === answerIndex) {
+        answerButtons.forEach((btn, idx) => {
+            if (idx === answerIndex) {
                 btn.classList.add('selected');
-                btn.setAttribute('data-selected', 'true');
+                btn.setAttribute('aria-pressed', 'true');
+            } else {
+                btn.classList.remove('selected', 'correct', 'incorrect');
+                btn.setAttribute('aria-pressed', 'false');
+                btn.disabled = false;
             }
         });
+        
+        // Enable next button now that a selection exists
+        const nextBtn = document.getElementById('next-question');
+        if (nextBtn) nextBtn.disabled = false;
     }
     
     /**
@@ -233,38 +207,35 @@ export class TestManager {
         
         this.isNavigating = true;
         
-        // Show feedback for current question before moving to next
-        if (this.currentTest && this.currentQuestionIndex < this.currentTest.questions.length) {
-            const currentQuestion = this.currentTest.questions[this.currentQuestionIndex];
-            if (currentQuestion.userAnswer !== undefined) {
-                this.showAnswerFeedback(currentQuestion.isCorrect, currentQuestion.correctAnswer);
-                
-                // Play sound feedback
-                if (this.app.soundManager.isEnabled()) {
-                    if (currentQuestion.isCorrect) {
-                        this.app.soundManager.playCorrect();
-                    } else {
-                        this.app.soundManager.playIncorrect();
-                    }
-                }
-                
-                // Wait a moment to show feedback before moving to next question
-                setTimeout(() => {
-                    this.currentQuestionIndex++;
-                    
-                    if (this.currentQuestionIndex >= this.currentTest.questions.length) {
-                        this.endTest();
-                    } else {
-                        this.showCurrentQuestion();
-                    }
-                    
-                    // Reset navigation flag
-                    this.isNavigating = false;
-                }, 1000); // Show feedback for 1 second
-                return;
-            }
+        // Persist user's answer (if any) for the current question
+        const question = this.currentTest.questions[this.currentQuestionIndex];
+        let userAnswer = null;
+        let isCorrect = false;
+        
+        if (this.timedOutCurrent) {
+            // No answer due to timeout in per-question mode
+            userAnswer = null;
+            isCorrect = false;
+        } else if (this.selectedAnswerIndex !== null) {
+            userAnswer = question.answers[this.selectedAnswerIndex];
+            isCorrect = this.app.questionGenerator.validateAnswer(question, userAnswer);
         }
         
+        const timeSpent = this.app.questionGenerator.calculateTimeSpent({ startTime: this.questionStartTime });
+        
+        this.userAnswers.push({
+            questionIndex: this.currentQuestionIndex,
+            userAnswer,
+            isCorrect,
+            timeSpent
+        });
+        
+        // Update question record
+        question.userAnswer = userAnswer;
+        question.isCorrect = isCorrect;
+        question.timeSpent = timeSpent;
+        
+        // Move to next
         this.currentQuestionIndex++;
         
         if (this.currentQuestionIndex >= this.currentTest.questions.length) {
@@ -346,16 +317,11 @@ export class TestManager {
      */
     handleTimeUp() {
         if (this.currentTest.settings.timerMode === 'per-question') {
-            // Auto-select no answer for current question
-            this.userAnswers.push({
-                questionIndex: this.currentQuestionIndex,
-                userAnswer: null,
-                isCorrect: false,
-                timeSpent: this.currentTest.settings.timerDuration
-            });
-            
-            // Move to next question
-            this.nextQuestion();
+            // Time up for this question: disable answers, allow user to click Next manually
+            this.timedOutCurrent = true;
+            this.disableAnswerButtons();
+            const nextBtn = document.getElementById('next-question');
+            if (nextBtn) nextBtn.disabled = false;
         } else if (this.currentTest.settings.timerMode === 'total-time') {
             // End test immediately
             this.endTest();
