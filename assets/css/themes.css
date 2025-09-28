@@ -101,11 +101,11 @@ body {
 
 /* Language-specific styles */
 [lang="ar"] {
-  font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+  font-family: var(--font-family-ar);
 }
 
 [lang="en"] {
-  font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+  font-family: var(--font-family-en);
 }
 
 /* Responsive theme adjustments */

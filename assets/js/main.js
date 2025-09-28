@@ -281,6 +281,46 @@ export class MainController {
         }
       }
     });
+    
+    // Special handling for logo text
+    this.updateLogoText(currentLang);
+  }
+
+  /**
+   * Update logo text based on language
+   */
+  updateLogoText(lang) {
+    const logoText = document.querySelector('.logo-text');
+    if (logoText) {
+      if (lang === 'en') {
+        // Show English text based on current page
+        const currentPage = this.getCurrentPageType();
+        const englishTexts = {
+          'index': 'SuperMind Trainer',
+          'training': 'Training Mode',
+          'exam': 'Exam Mode',
+          'results': 'Results',
+          'leaderboard': 'Leaderboard'
+        };
+        logoText.textContent = englishTexts[currentPage] || 'SuperMind Trainer';
+      } else {
+        // Show Arabic text - get from data attribute or default
+        const arabicText = logoText.getAttribute('data-ar') || 'تدريب سوبرمايد';
+        logoText.textContent = arabicText;
+      }
+    }
+  }
+
+  /**
+   * Get current page type for logo text
+   */
+  getCurrentPageType() {
+    const path = window.location.pathname;
+    if (path.includes('training.html')) return 'training';
+    if (path.includes('exam.html')) return 'exam';
+    if (path.includes('results.html')) return 'results';
+    if (path.includes('leaderboard.html')) return 'leaderboard';
+    return 'index'; // Default to index page
   }
 
   /**

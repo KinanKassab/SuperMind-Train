@@ -59,7 +59,9 @@
   --transition-slow: 0.5s ease-in-out;
   
   /* Typography */
-  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-family-ar: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-family-en: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-family: var(--font-family-ar);
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -110,6 +112,7 @@ html {
 body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
+  font-weight: 400;
   line-height: 1.6;
   color: var(--text-primary);
   background-color: var(--bg-primary);
@@ -117,6 +120,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Container */
@@ -138,40 +143,288 @@ body {
   }
 }
 
-/* Header */
+/* Header Component - Professional Sticky Header */
 .header {
-  background-color: var(--bg-card);
-  border-bottom: 1px solid var(--border-color);
-  padding: var(--spacing-md) 0;
+  /* Translucent background with backdrop blur for modern glass effect */
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  /* Subtle border and elevated shadow for depth */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  
+  /* Sticky positioning with proper z-index */
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  box-shadow: var(--shadow-sm);
+  
+  /* Responsive padding - mobile first */
+  padding: var(--spacing-sm) 0;
+  
+  /* Smooth transitions for theme changes */
+  transition: all var(--transition-normal);
 }
 
+/* Dark theme header styling */
+.dark-theme .header {
+  background-color: rgba(17, 24, 39, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Header container - flex layout for responsive design */
 .header .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--spacing-md);
 }
 
+/* Logo Component - Left side with hover effects */
 .logo {
-  font-size: var(--font-size-xl);
+  /* Typography styling */
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--primary-color);
+  letter-spacing: -0.025em;
+  
+  /* Flex layout for icon + text */
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  
+  /* Interactive states */
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  
+  /* Prevent text selection */
+  user-select: none;
 }
 
+/* Logo text with language switching support */
+.logo-text {
+  /* Default Arabic text */
+  display: block;
+  transition: all var(--transition-fast);
+}
+
+/* Logo hover effect - color transition and scale */
+.logo:hover {
+  color: var(--primary-hover);
+  transform: scale(1.05);
+}
+
+/* Logo focus state for accessibility */
+.logo:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Logo icon styling */
 .logo-icon {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl);
+  transition: transform var(--transition-fast);
 }
 
+/* Logo icon animation on hover */
+.logo:hover .logo-icon {
+  transform: rotate(5deg);
+}
+
+/* Header Controls - Right side button group */
 .header-controls {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
+}
+
+/* Control Button Base Styles */
+.header-controls .btn-icon {
+  /* Gradient background for modern look */
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  color: var(--text-inverse);
+  
+  /* Rounded corners */
+  border-radius: 12px;
+  border: none;
+  
+  /* Size and spacing */
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  
+  /* Interactive states */
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  
+  /* Focus and accessibility */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Control button hover effect - translate up */
+.header-controls .btn-icon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+/* Control button active state - scale down */
+.header-controls .btn-icon:active {
+  transform: scale(0.98);
+}
+
+/* Focus-visible outline for accessibility */
+.header-controls .btn-icon:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Icon styling within control buttons */
+.header-controls .btn-icon .theme-icon {
+  font-size: var(--font-size-base);
+  transition: transform var(--transition-fast);
+}
+
+/* Language icon - SVG background styling */
+.header-controls .btn-icon .lang-icon {
+  /* Hide text content and use SVG background */
+  font-size: 0;
+  text-indent: -9999px;
+  overflow: hidden;
+  
+  /* SVG background image */
+  background-image: url('../Translate.svg');
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: center;
+  
+  /* Ensure proper sizing */
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  
+  /* Smooth transitions */
+  transition: transform var(--transition-fast);
+  
+  /* SVG color filter for theme adaptation */
+  filter: brightness(0) saturate(100%) invert(100%);
+}
+
+/* Icon animation on hover */
+.header-controls .btn-icon:hover .theme-icon {
+  transform: scale(1.1);
+}
+
+.header-controls .btn-icon:hover .lang-icon {
+  transform: scale(1.1);
+}
+
+/* Responsive Design - Tablet and Desktop */
+@media (min-width: 768px) {
+  .header {
+    padding: var(--spacing-md) 0;
+  }
+  
+  .logo {
+    font-size: var(--font-size-xl);
+  }
+  
+  .logo-icon {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .header-controls .btn-icon {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .header-controls {
+    gap: var(--spacing-sm);
+  }
+  
+  .header-controls .btn-icon .lang-icon {
+    background-size: 22px 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Large Desktop - Enhanced spacing */
+@media (min-width: 1024px) {
+  .header {
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .header-controls .btn-icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .header-controls .btn-icon .theme-icon {
+    font-size: var(--font-size-lg);
+  }
+  
+  .header-controls .btn-icon .lang-icon {
+    background-size: 24px 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Back Button Styling - Secondary button in header */
+.header-controls .btn-secondary {
+  /* Modern button styling */
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  
+  /* Size and spacing */
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  
+  /* Interactive states */
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  
+  /* Typography */
+  letter-spacing: -0.01em;
+}
+
+/* Back button hover effect */
+.header-controls .btn-secondary:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Back button active state */
+.header-controls .btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Back button focus state */
+.header-controls .btn-secondary:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Dark theme back button */
+.dark-theme .header-controls .btn-secondary {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-theme .header-controls .btn-secondary:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-hover);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Main content */
@@ -196,6 +449,7 @@ body {
   transition: all var(--transition-fast);
   white-space: nowrap;
   user-select: none;
+  letter-spacing: -0.01em;
 }
 
 .btn:disabled {
@@ -282,6 +536,8 @@ body {
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: var(--spacing-md);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }
 
 .welcome-description {
@@ -330,6 +586,7 @@ body {
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: var(--spacing-sm);
+  letter-spacing: -0.025em;
 }
 
 .mode-description {
@@ -480,6 +737,8 @@ body {
   justify-content: center;
   gap: var(--spacing-md);
   flex-wrap: wrap;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
 }
 
 .operator,
@@ -525,6 +784,8 @@ body {
   font-size: var(--font-size-lg);
   font-weight: 600;
   text-align: right;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
 }
 
 .answer-btn:hover {
