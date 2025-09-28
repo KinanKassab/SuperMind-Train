@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة النتائج - تدريب سوبرمايد</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+</head>
+<body class="light-theme">
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">
+                <span class="logo-icon">🏆</span>
+                <span data-ar="لوحة النتائج" data-en="Leaderboard">لوحة النتائج</span>
+            </h1>
+            <div class="header-controls">
+                <button id="theme-toggle" class="btn btn-icon" aria-label="تبديل الثيم">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button id="back-btn" class="btn btn-secondary" data-ar="العودة" data-en="Back">العودة</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Leaderboard Header -->
+            <div class="leaderboard-header">
+                <div class="header-content">
+                    <h2 data-ar="أفضل النتائج" data-en="Top Scores">أفضل النتائج</h2>
+                    <p data-ar="شاهد أفضل النتائج المحفوظة" data-en="View your best saved scores">
+                        شاهد أفضل النتائج المحفوظة
+                    </p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="clear-scores">
+                        <span class="btn-icon">🗑️</span>
+                        <span data-ar="مسح النتائج" data-en="Clear Scores">مسح النتائج</span>
+                    </button>
+                    <button class="btn btn-secondary" id="export-leaderboard">
+                        <span class="btn-icon">📥</span>
+                        <span data-ar="تصدير" data-en="Export">تصدير</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="filter-mode" data-ar="نوع الاختبار" data-en="Test Type">نوع الاختبار</label>
+                    <select id="filter-mode">
+                        <option value="all" data-ar="الكل" data-en="All">الكل</option>
+                        <option value="training" data-ar="التدريب" data-en="Training">التدريب</option>
+                        <option value="exam" data-ar="الاختبار" data-en="Exam">الاختبار</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="sort-by" data-ar="ترتيب حسب" data-en="Sort By">ترتيب حسب</label>
+                    <select id="sort-by">
+                        <option value="score" data-ar="النتيجة" data-en="Score">النتيجة</option>
+                        <option value="date" data-ar="التاريخ" data-en="Date">التاريخ</option>
+                        <option value="time" data-ar="الوقت" data-en="Time">الوقت</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="time-range" data-ar="الفترة الزمنية" data-en="Time Range">الفترة الزمنية</label>
+                    <select id="time-range">
+                        <option value="all" data-ar="الكل" data-en="All">الكل</option>
+                        <option value="today" data-ar="اليوم" data-en="Today">اليوم</option>
+                        <option value="week" data-ar="هذا الأسبوع" data-en="This Week">هذا الأسبوع</option>
+                        <option value="month" data-ar="هذا الشهر" data-en="This Month">هذا الشهر</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Statistics Summary -->
+            <div class="stats-summary">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="total-tests">0</div>
+                        <div class="stat-label" data-ar="إجمالي الاختبارات" data-en="Total Tests">إجمالي الاختبارات</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="average-score">0%</div>
+                        <div class="stat-label" data-ar="متوسط النتيجة" data-en="Average Score">متوسط النتيجة</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="best-score">0%</div>
+                        <div class="stat-label" data-ar="أفضل نتيجة" data-en="Best Score">أفضل نتيجة</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="total-time">0</div>
+                        <div class="stat-label" data-ar="إجمالي الوقت" data-en="Total Time">إجمالي الوقت</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard List -->
+            <div class="leaderboard-container">
+                <div class="leaderboard-list" id="leaderboard-list">
+                    <!-- Scores will be populated by JavaScript -->
+                </div>
+                
+                <!-- Empty State -->
+                <div class="empty-state" id="empty-state" style="display: none;">
+                    <div class="empty-icon">📝</div>
+                    <h3 data-ar="لا توجد نتائج محفوظة" data-en="No Saved Scores">لا توجد نتائج محفوظة</h3>
+                    <p data-ar="ابدأ بالتدريب أو الاختبار لحفظ النتائج" data-en="Start training or taking exams to save scores">
+                        ابدأ بالتدريب أو الاختبار لحفظ النتائج
+                    </p>
+                    <button class="btn btn-primary" id="start-first-test">
+                        <span data-ar="ابدأ الآن" data-en="Start Now">ابدأ الآن</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Achievement Badges -->
+            <div class="achievements-section">
+                <h3 data-ar="الإنجازات" data-en="Achievements">الإنجازات</h3>
+                <div class="achievements-grid" id="achievements-grid">
+                    <!-- Achievements will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Score Details Modal -->
+    <div id="score-details-modal" class="modal" role="dialog" aria-labelledby="score-details-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="score-details-title" data-ar="تفاصيل النتيجة" data-en="Score Details">تفاصيل النتيجة</h2>
+                <button class="modal-close" aria-label="إغلاق">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="score-details-content" id="score-details-content">
+                    <!-- Score details will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="delete-score">
+                    <span data-ar="حذف" data-en="Delete">حذف</span>
+                </button>
+                <button class="btn btn-primary" id="close-details">
+                    <span data-ar="إغلاق" data-en="Close">إغلاق</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Confirmation Modal -->
+    <div id="clear-confirmation-modal" class="modal" role="dialog" aria-labelledby="clear-confirmation-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="clear-confirmation-title" data-ar="تأكيد المسح" data-en="Confirm Clear">تأكيد المسح</h2>
+            </div>
+            <div class="modal-body">
+                <div class="confirmation-message">
+                    <div class="warning-icon">⚠️</div>
+                    <p data-ar="هل أنت متأكد من حذف جميع النتائج المحفوظة؟ لا يمكن التراجع عن هذا الإجراء." data-en="Are you sure you want to delete all saved scores? This action cannot be undone.">
+                        هل أنت متأكد من حذف جميع النتائج المحفوظة؟ لا يمكن التراجع عن هذا الإجراء.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-clear">
+                    <span data-ar="إلغاء" data-en="Cancel">إلغاء</span>
+                </button>
+                <button class="btn btn-danger" id="confirm-clear">
+                    <span data-ar="حذف الكل" data-en="Delete All">حذف الكل</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p data-ar="© 2024 تدريب سوبرمايد - تطوير تعليمي تفاعلي" data-en="© 2024 SuperMind Trainer - Interactive Educational Development">
+                © 2024 تدريب سوبرمايد - تطوير تعليمي تفاعلي
+            </p>
+        </div>
+    </footer>
+
+    <script type="module" src="assets/js/utils.js"></script>
+    <script type="module" src="assets/js/leaderboard.js"></script>
+</body>
+</html>

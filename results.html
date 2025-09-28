@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>النتائج - تدريب سوبرمايد</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+</head>
+<body class="light-theme">
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">
+                <span class="logo-icon">📊</span>
+                <span data-ar="النتائج" data-en="Results">النتائج</span>
+            </h1>
+            <div class="header-controls">
+                <button id="theme-toggle" class="btn btn-icon" aria-label="تبديل الثيم">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button id="back-btn" class="btn btn-secondary" data-ar="العودة" data-en="Back">العودة</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Results Summary -->
+            <div class="results-summary">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <h2 data-ar="ملخص النتائج" data-en="Results Summary">ملخص النتائج</h2>
+                        <div class="test-type" id="test-type">
+                            <span data-ar="وضع التدريب" data-en="Training Mode">وضع التدريب</span>
+                        </div>
+                    </div>
+                    <div class="summary-content">
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <span id="final-score">85%</span>
+                            </div>
+                            <div class="score-label" data-ar="النتيجة النهائية" data-en="Final Score">النتيجة النهائية</div>
+                        </div>
+                        <div class="summary-stats">
+                            <div class="stat-item">
+                                <span class="stat-value correct" id="correct-answers">8</span>
+                                <span class="stat-label" data-ar="صحيح" data-en="Correct">صحيح</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value wrong" id="wrong-answers">2</span>
+                                <span class="stat-label" data-ar="خطأ" data-en="Wrong">خطأ</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="total-time">02:30</span>
+                                <span class="stat-label" data-ar="الوقت" data-en="Time">الوقت</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Results -->
+            <div class="detailed-results">
+                <div class="results-header">
+                    <h3 data-ar="تفاصيل الأسئلة" data-en="Question Details">تفاصيل الأسئلة</h3>
+                    <div class="results-actions">
+                        <button class="btn btn-secondary" id="export-csv">
+                            <span class="btn-icon">📥</span>
+                            <span data-ar="تصدير CSV" data-en="Export CSV">تصدير CSV</span>
+                        </button>
+                        <button class="btn btn-secondary" id="print-results">
+                            <span class="btn-icon">🖨️</span>
+                            <span data-ar="طباعة" data-en="Print">طباعة</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="questions-list" id="questions-list">
+                    <!-- Questions will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Performance Analysis -->
+            <div class="performance-analysis">
+                <h3 data-ar="تحليل الأداء" data-en="Performance Analysis">تحليل الأداء</h3>
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <div class="analysis-icon">⚡</div>
+                        <div class="analysis-content">
+                            <h4 data-ar="سرعة الإجابة" data-en="Answer Speed">سرعة الإجابة</h4>
+                            <p id="avg-response-time" data-ar="متوسط الوقت: 15 ثانية" data-en="Average time: 15 seconds">
+                                متوسط الوقت: 15 ثانية
+                            </p>
+                        </div>
+                    </div>
+                    <div class="analysis-card">
+                        <div class="analysis-icon">🎯</div>
+                        <div class="analysis-content">
+                            <h4 data-ar="دقة الإجابة" data-en="Accuracy">دقة الإجابة</h4>
+                            <p id="accuracy-rate" data-ar="معدل الدقة: 80%" data-en="Accuracy rate: 80%">
+                                معدل الدقة: 80%
+                            </p>
+                        </div>
+                    </div>
+                    <div class="analysis-card">
+                        <div class="analysis-icon">📈</div>
+                        <div class="analysis-content">
+                            <h4 data-ar="التقدم" data-en="Progress">التقدم</h4>
+                            <p id="progress-indicator" data-ar="تحسن مقارنة بالجلسة السابقة" data-en="Improved from last session">
+                                تحسن مقارنة بالجلسة السابقة
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="results-actions">
+                <button class="btn btn-secondary" id="retry-test">
+                    <span class="btn-icon">🔄</span>
+                    <span data-ar="إعادة الاختبار" data-en="Retry Test">إعادة الاختبار</span>
+                </button>
+                <button class="btn btn-primary" id="new-test">
+                    <span class="btn-icon">✨</span>
+                    <span data-ar="اختبار جديد" data-en="New Test">اختبار جديد</span>
+                </button>
+                <button class="btn btn-secondary" id="save-score">
+                    <span class="btn-icon">💾</span>
+                    <span data-ar="حفظ النتيجة" data-en="Save Score">حفظ النتيجة</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Save Score Modal -->
+    <div id="save-score-modal" class="modal" role="dialog" aria-labelledby="save-score-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="save-score-title" data-ar="حفظ النتيجة" data-en="Save Score">حفظ النتيجة</h2>
+                <button class="modal-close" aria-label="إغلاق">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="save-score-form">
+                    <div class="form-group">
+                        <label for="player-name" data-ar="اسم اللاعب" data-en="Player Name">اسم اللاعب</label>
+                        <input type="text" id="player-name" name="playerName" required 
+                               placeholder="أدخل اسمك" data-placeholder-ar="أدخل اسمك" data-placeholder-en="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="score-comment" data-ar="تعليق (اختياري)" data-en="Comment (Optional)">تعليق (اختياري)</label>
+                        <textarea id="score-comment" name="scoreComment" rows="3" 
+                                  placeholder="أضف تعليقاً على أدائك" data-placeholder-ar="أضف تعليقاً على أدائك" data-placeholder-en="Add a comment about your performance"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancel-save">
+                    <span data-ar="إلغاء" data-en="Cancel">إلغاء</span>
+                </button>
+                <button type="button" class="btn btn-primary" id="confirm-save">
+                    <span data-ar="حفظ" data-en="Save">حفظ</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confetti Animation Container -->
+    <div id="confetti-container"></div>
+
+    <footer class="footer">
+        <div class="container">
+            <p data-ar="© 2024 تدريب سوبرمايد - تطوير تعليمي تفاعلي" data-en="© 2024 SuperMind Trainer - Interactive Educational Development">
+                © 2024 تدريب سوبرمايد - تطوير تعليمي تفاعلي
+            </p>
+        </div>
+    </footer>
+
+    <script type="module" src="assets/js/utils.js"></script>
+    <script type="module" src="assets/js/results.js"></script>
+</body>
+</html>

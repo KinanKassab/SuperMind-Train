@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وضع الاختبار - تدريب سوبرمايد</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+</head>
+<body class="light-theme">
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">
+                <span class="logo-icon">📝</span>
+                <span data-ar="وضع الاختبار" data-en="Exam Mode">وضع الاختبار</span>
+            </h1>
+            <div class="header-controls">
+                <button id="theme-toggle" class="btn btn-icon" aria-label="تبديل الثيم">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button id="back-btn" class="btn btn-secondary" data-ar="العودة" data-en="Back">العودة</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Progress Section -->
+            <div class="progress-section">
+                <div class="progress-info">
+                    <div class="progress-stats">
+                        <span class="question-counter">
+                            <span data-ar="سؤال" data-en="Question">سؤال</span>
+                            <span id="current-question">1</span>
+                            <span data-ar="من" data-en="of">من</span>
+                            <span id="total-questions">10</span>
+                        </span>
+                        <span class="time-remaining">
+                            <span data-ar="الوقت المتبقي" data-en="Time Remaining">الوقت المتبقي</span>
+                            <span id="time-remaining">05:00</span>
+                        </span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+                <div class="timer-display" id="timer-display" style="display: none;">
+                    <span class="timer-icon">⏱️</span>
+                    <span id="timer-text">30</span>
+                </div>
+            </div>
+
+            <!-- Question Section -->
+            <div class="question-section">
+                <div class="question-card">
+                    <div class="question-header">
+                        <h2 class="question-title" data-ar="حل المسألة التالية" data-en="Solve the following problem">حل المسألة التالية</h2>
+                    </div>
+                    <div class="question-content">
+                        <div class="math-problem">
+                            <span id="factor-a">7</span>
+                            <span class="operator">×</span>
+                            <span id="factor-b">23</span>
+                            <span class="equals">=</span>
+                            <span class="question-mark">?</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Answer Options -->
+                <div class="answer-options" id="answer-options">
+                    <button class="answer-btn" data-answer="1" tabindex="1">
+                        <span class="answer-number">1</span>
+                        <span class="answer-value" id="answer-1">161</span>
+                    </button>
+                    <button class="answer-btn" data-answer="2" tabindex="2">
+                        <span class="answer-number">2</span>
+                        <span class="answer-value" id="answer-2">147</span>
+                    </button>
+                    <button class="answer-btn" data-answer="3" tabindex="3">
+                        <span class="answer-number">3</span>
+                        <span class="answer-value" id="answer-3">175</span>
+                    </button>
+                    <button class="answer-btn" data-answer="4" tabindex="4">
+                        <span class="answer-number">4</span>
+                        <span class="answer-value" id="answer-4">189</span>
+                    </button>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="skip-btn">
+                        <span data-ar="تخطي" data-en="Skip">تخطي</span>
+                    </button>
+                    <button class="btn btn-primary" id="submit-btn" disabled>
+                        <span data-ar="تأكيد" data-en="Submit">تأكيد</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Exam Instructions -->
+            <div class="exam-instructions">
+                <div class="instruction-item">
+                    <span class="instruction-icon">ℹ️</span>
+                    <span data-ar="اختر الإجابة الصحيحة من الخيارات الأربعة" data-en="Choose the correct answer from the four options">
+                        اختر الإجابة الصحيحة من الخيارات الأربعة
+                    </span>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-icon">⌨️</span>
+                    <span data-ar="استخدم الأرقام 1-4 أو Enter للتأكيد" data-en="Use numbers 1-4 or Enter to confirm">
+                        استخدم الأرقام 1-4 أو Enter للتأكيد
+                    </span>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-icon">⏰</span>
+                    <span data-ar="انتبه للمؤقت - سيتم إرسال الإجابة تلقائياً" data-en="Watch the timer - answers will be submitted automatically">
+                        انتبه للمؤقت - سيتم إرسال الإجابة تلقائياً
+                    </span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Exam Completion Modal -->
+    <div id="exam-completion-modal" class="modal" role="dialog" aria-labelledby="exam-completion-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="exam-completion-title" data-ar="انتهى الاختبار!" data-en="Exam Complete!">انتهى الاختبار!</h2>
+            </div>
+            <div class="modal-body">
+                <div class="completion-message">
+                    <div class="completion-icon">🎉</div>
+                    <p data-ar="تم إكمال الاختبار بنجاح!" data-en="Exam completed successfully!">
+                        تم إكمال الاختبار بنجاح!
+                    </p>
+                </div>
+                <div class="completion-stats">
+                    <div class="stat-row">
+                        <span class="stat-label" data-ar="عدد الأسئلة" data-en="Questions">عدد الأسئلة</span>
+                        <span class="stat-value" id="exam-total-questions">10</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label" data-ar="الوقت المستغرق" data-en="Time Taken">الوقت المستغرق</span>
+                        <span class="stat-value" id="exam-time-taken">03:45</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="view-exam-results">
+                    <span data-ar="عرض النتائج" data-en="View Results">عرض النتائج</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Warning Modal -->
+    <div id="time-warning-modal" class="modal" role="dialog" aria-labelledby="time-warning-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="time-warning-title" data-ar="تحذير الوقت" data-en="Time Warning">تحذير الوقت</h2>
+            </div>
+            <div class="modal-body">
+                <div class="warning-message">
+                    <div class="warning-icon">⚠️</div>
+                    <p id="time-warning-text" data-ar="الوقت المتبقي: 30 ثانية" data-en="Time remaining: 30 seconds">
+                        الوقت المتبقي: 30 ثانية
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="acknowledge-warning">
+                    <span data-ar="فهمت" data-en="Understood">فهمت</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="assets/js/utils.js"></script>
+    <script type="module" src="assets/js/questionGenerator.js"></script>
+    <script type="module" src="assets/js/exam.js"></script>
+</body>
+</html>

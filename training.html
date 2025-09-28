@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وضع التدريب - تدريب سوبرمايد</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+</head>
+<body class="light-theme">
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">
+                <span class="logo-icon">📚</span>
+                <span data-ar="وضع التدريب" data-en="Training Mode">وضع التدريب</span>
+            </h1>
+            <div class="header-controls">
+                <button id="theme-toggle" class="btn btn-icon" aria-label="تبديل الثيم">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button id="back-btn" class="btn btn-secondary" data-ar="العودة" data-en="Back">العودة</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Progress Section -->
+            <div class="progress-section">
+                <div class="progress-info">
+                    <div class="progress-stats">
+                        <span class="question-counter">
+                            <span data-ar="سؤال" data-en="Question">سؤال</span>
+                            <span id="current-question">1</span>
+                            <span data-ar="من" data-en="of">من</span>
+                            <span id="total-questions">10</span>
+                        </span>
+                        <span class="score-display">
+                            <span data-ar="النتيجة" data-en="Score">النتيجة</span>
+                            <span id="current-score">0</span>%
+                        </span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+                <div class="timer-display" id="timer-display" style="display: none;">
+                    <span class="timer-icon">⏱️</span>
+                    <span id="timer-text">30</span>
+                </div>
+            </div>
+
+            <!-- Question Section -->
+            <div class="question-section">
+                <div class="question-card">
+                    <div class="question-header">
+                        <h2 class="question-title" data-ar="حل المسألة التالية" data-en="Solve the following problem">حل المسألة التالية</h2>
+                    </div>
+                    <div class="question-content">
+                        <div class="math-problem">
+                            <span id="factor-a">5</span>
+                            <span class="operator">×</span>
+                            <span id="factor-b">12</span>
+                            <span class="equals">=</span>
+                            <span class="question-mark">?</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Answer Options -->
+                <div class="answer-options" id="answer-options">
+                    <button class="answer-btn" data-answer="1" tabindex="1">
+                        <span class="answer-number">1</span>
+                        <span class="answer-value" id="answer-1">60</span>
+                    </button>
+                    <button class="answer-btn" data-answer="2" tabindex="2">
+                        <span class="answer-number">2</span>
+                        <span class="answer-value" id="answer-2">72</span>
+                    </button>
+                    <button class="answer-btn" data-answer="3" tabindex="3">
+                        <span class="answer-number">3</span>
+                        <span class="answer-value" id="answer-3">48</span>
+                    </button>
+                    <button class="answer-btn" data-answer="4" tabindex="4">
+                        <span class="answer-number">4</span>
+                        <span class="answer-value" id="answer-4">84</span>
+                    </button>
+                </div>
+
+                <!-- Feedback Section -->
+                <div class="feedback-section" id="feedback-section" style="display: none;">
+                    <div class="feedback-card" id="feedback-card">
+                        <div class="feedback-icon" id="feedback-icon">✅</div>
+                        <div class="feedback-text" id="feedback-text">
+                            <span data-ar="إجابة صحيحة!" data-en="Correct answer!">إجابة صحيحة!</span>
+                        </div>
+                        <div class="feedback-explanation" id="feedback-explanation">
+                            <span data-ar="5 × 12 = 60" data-en="5 × 12 = 60">5 × 12 = 60</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="hint-btn" style="display: none;">
+                        <span data-ar="تلميح" data-en="Hint">تلميح</span>
+                    </button>
+                    <button class="btn btn-primary" id="next-btn" style="display: none;">
+                        <span data-ar="التالي" data-en="Next">التالي</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Training Stats -->
+            <div class="training-stats">
+                <div class="stat-item">
+                    <span class="stat-label" data-ar="صحيح" data-en="Correct">صحيح</span>
+                    <span class="stat-value correct" id="correct-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label" data-ar="خطأ" data-en="Wrong">خطأ</span>
+                    <span class="stat-value wrong" id="wrong-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label" data-ar="الوقت" data-en="Time">الوقت</span>
+                    <span class="stat-value" id="elapsed-time">00:00</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Completion Modal -->
+    <div id="completion-modal" class="modal" role="dialog" aria-labelledby="completion-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="completion-title" data-ar="انتهى التدريب!" data-en="Training Complete!">انتهى التدريب!</h2>
+            </div>
+            <div class="modal-body">
+                <div class="completion-stats">
+                    <div class="completion-score">
+                        <div class="score-circle">
+                            <span id="final-score">85%</span>
+                        </div>
+                        <p class="score-label" data-ar="النتيجة النهائية" data-en="Final Score">النتيجة النهائية</p>
+                    </div>
+                    <div class="completion-details">
+                        <div class="detail-item">
+                            <span class="detail-label" data-ar="الإجابات الصحيحة" data-en="Correct Answers">الإجابات الصحيحة</span>
+                            <span class="detail-value" id="final-correct">8</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" data-ar="الإجابات الخاطئة" data-en="Wrong Answers">الإجابات الخاطئة</span>
+                            <span class="detail-value" id="final-wrong">2</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" data-ar="الوقت المستغرق" data-en="Time Taken">الوقت المستغرق</span>
+                            <span class="detail-value" id="final-time">02:30</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="view-results">
+                    <span data-ar="عرض التفاصيل" data-en="View Details">عرض التفاصيل</span>
+                </button>
+                <button class="btn btn-primary" id="start-new-training">
+                    <span data-ar="تدريب جديد" data-en="New Training">تدريب جديد</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="assets/js/utils.js"></script>
+    <script type="module" src="assets/js/questionGenerator.js"></script>
+    <script type="module" src="assets/js/training.js"></script>
+</body>
+</html>

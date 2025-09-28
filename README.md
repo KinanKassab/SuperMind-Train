@@ -1,256 +1,244 @@
-# SuperMind-Train - تدريب سوبر مايند 🚀
+# تدريب سوبرمايد - SuperMind Trainer
 
-A complete, production-ready, responsive web application for training students on multiplication with Arabic UI support.
+تطبيق ويب تفاعلي لتدريب الطلاب على جدول الضرب بطريقة ممتعة وفعالة.
 
-## 🌟 Features
+## 🌟 المميزات
 
-### Core Functionality
-- **Random Question Generation**: First factor (0-10), second factor (0-99)
-- **Multiple Choice Answers**: 4 options with 1 correct + 3 intelligent distractors
-- **Configurable Settings**: Number of questions, timer modes, practice/exam modes
-- **Bilingual Support**: Arabic (default) with English fallback
-- **Responsive Design**: Mobile-first approach with RTL support
+### 🎯 وضع التدريب (Training Mode)
+- تدريب تفاعلي مع ملاحظات فورية
+- إظهار الإجابة الصحيحة فور الإجابة
+- تلميحات مفيدة للطلاب
+- إحصائيات مفصلة للأداء
 
-### Timer Modes
-- **No Timer**: Practice without time pressure
-- **Per Question**: Individual time limit for each question
-- **Total Time**: Overall time limit for the entire test
+### 📝 وضع الاختبار (Exam Mode)
+- اختبارات محدودة الوقت
+- تقييم نهائي شامل
+- عدم إظهار النتائج حتى النهاية
+- إمكانية تخطي الأسئلة
 
-### Test Modes
-- **Practice Mode**: Immediate feedback, no time pressure
-- **Exam Mode**: Timed tests with locked answers
+### 🏆 لوحة النتائج
+- حفظ أفضل النتائج
+- ترتيب حسب النتيجة أو التاريخ
+- تصدير النتائج إلى CSV
+- نظام إنجازات
 
-### Advanced Features
-- **Sound Effects**: Audio feedback for correct/incorrect answers
-- **Progress Tracking**: Visual progress bar and question counter
-- **Results Analysis**: Detailed score breakdown and time analysis
-- **Leaderboard**: Local high scores with player names
-- **Data Export**: CSV export for test results
-- **Dark/Light Theme**: Toggle between themes
-- **Accessibility**: Full keyboard navigation and screen reader support
+### ⚙️ إعدادات قابلة للتخصيص
+- عدد الأسئلة (5-100)
+- وضع المؤقت (بدون مؤقت / لكل سؤال / إجمالي)
+- تفعيل/إلغاء الأصوات
+- إظهار/إخفاء التلميحات
 
-## 📁 Project Structure
+## 🚀 التشغيل
 
-```
-SuperMind-Train/
-├── index.html                 # Main HTML file
-├── styles/
-│   └── main.css              # Main stylesheet with RTL support
-├── js/
-│   ├── app.js                # Main application entry point
-│   └── modules/
-│       ├── QuestionGenerator.js  # Question generation logic
-│       ├── Timer.js              # Timer functionality
-│       ├── Storage.js            # LocalStorage operations
-│       ├── SoundManager.js       # Audio feedback
-│       ├── UI.js                 # User interface management
-│       └── TestManager.js        # Test flow management
-├── tests/
-│   ├── test-question-generator.js # Unit tests for question generator
-│   ├── test-timer.js             # Unit tests for timer
-│   ├── test-storage.js           # Unit tests for storage
-│   └── run-tests.html            # Test runner interface
-└── README.md                     # This file
-```
+### المتطلبات
+- متصفح ويب حديث يدعم ES6 Modules
+- لا حاجة لخادم ويب (يعمل محلياً)
 
-## 🚀 Quick Start
+### التشغيل المحلي
 
-### Option 1: Direct File Opening
-1. Download all files to a local directory
-2. Open `index.html` in a modern web browser
-3. Start training immediately!
+1. **تحميل المشروع**
+   ```bash
+   git clone <repository-url>
+   cd SuperMind-Trainer
+   ```
 
-### Option 2: Local Server (Recommended)
+2. **فتح التطبيق**
+   - افتح `index.html` في متصفحك
+   - أو استخدم خادم محلي:
+   ```bash
+   # باستخدام Python
+   python -m http.server 8000
+   
+   # باستخدام Node.js
+   npx serve .
+   
+   # باستخدام PHP
+   php -S localhost:8000
+   ```
+
+3. **الوصول للتطبيق**
+   - افتح المتصفح واذهب إلى `http://localhost:8000`
+
+## 📱 الاستخدام
+
+### بدء التدريب
+1. اختر "وضع التدريب" من الصفحة الرئيسية
+2. اضبط الإعدادات حسب الحاجة
+3. اضغط "ابدأ" لبدء التدريب
+4. اختر الإجابة الصحيحة من الخيارات الأربعة
+5. شاهد الملاحظات الفورية وتابع التقدم
+
+### بدء الاختبار
+1. اختر "وضع الاختبار" من الصفحة الرئيسية
+2. اضبط الإعدادات (عدد الأسئلة، المؤقت، إلخ)
+3. اضغط "ابدأ" لبدء الاختبار
+4. أجب على الأسئلة في الوقت المحدد
+5. شاهد النتائج النهائية
+
+### لوحة النتائج
+1. اختر "لوحة النتائج" من الصفحة الرئيسية
+2. شاهد أفضل النتائج المحفوظة
+3. استخدم المرشحات للبحث عن نتائج محددة
+4. احفظ نتائجك الجديدة
+5. تصدير النتائج إلى ملف CSV
+
+## ⌨️ اختصارات لوحة المفاتيح
+
+- **الأرقام 1-4**: اختيار الإجابة
+- **Enter**: تأكيد الإجابة
+- **N**: الانتقال للسؤال التالي (في وضع التدريب)
+- **Escape**: إغلاق النوافذ المنبثقة
+
+## 🎨 التخصيص
+
+### الثيمات
+- **الوضع الفاتح**: مناسب للاستخدام في النهار
+- **الوضع الداكن**: مناسب للاستخدام في الليل
+- تبديل تلقائي حسب تفضيلات النظام
+
+### اللغة
+- **العربية**: اللغة الافتراضية مع دعم RTL
+- **الإنجليزية**: لغة بديلة مع دعم LTR
+- تبديل سهل بين اللغات
+
+## 📊 أنواع الأسئلة
+
+### نطاق العوامل
+- **العامل الأول (A)**: 0 إلى 10
+- **العامل الثاني (B)**: 0 إلى 99
+- **الإجابة الصحيحة**: A × B
+
+### خيارات الإجابة
+- **4 خيارات متعددة** لكل سؤال
+- **إجابة واحدة صحيحة**
+- **3 إجابات مشتتة** ذكية:
+  - ±1 من الإجابة الصحيحة
+  - تبديل الأرقام
+  - تغيير العوامل
+  - قيم عشوائية معقولة
+
+## 🧪 الاختبارات
+
+### تشغيل الاختبارات
 ```bash
-# Using Python 3
-python -m http.server 8000
+# تثبيت Jest (إذا لم يكن مثبتاً)
+npm install --save-dev jest
 
-# Using Node.js (if you have http-server installed)
-npx http-server
+# تشغيل الاختبارات
+npm test
 
-# Using PHP
-php -S localhost:8000
+# تشغيل اختبارات محددة
+npm test questionGenerator.test.js
+npm test scoring.test.js
 ```
 
-Then open `http://localhost:8000` in your browser.
+### تغطية الاختبارات
+- **توليد الأسئلة**: اختبار شامل لجميع الوظائف
+- **نظام التقييم**: اختبار حسابات النتائج
+- **التحقق من صحة البيانات**: اختبار صحة المدخلات
+- **معالجة الأخطاء**: اختبار الحالات الاستثنائية
 
-## 🎮 How to Use
+## 📁 هيكل المشروع
 
-### Starting a Test
-1. **Choose Mode**: Select "وضع الممارسة" (Practice Mode) or "وضع الاختبار" (Exam Mode)
-2. **Configure Settings**: Click "إعدادات" (Settings) to customize:
-   - Number of questions (5, 10, 15, 20, 30)
-   - Timer mode (Off, Per Question, Total Time)
-   - Sound effects (On/Off)
-   - Language (Arabic/English)
-3. **Begin Test**: Click your chosen mode to start
-
-### During the Test
-- **Answer Selection**: Click on one of the 4 answer options
-- **Keyboard Shortcuts**:
-  - `1-4`: Select answer options
-  - `Enter`: Confirm/Next question
-  - `N`: Next question
-  - `Escape`: Close modals
-- **Progress Tracking**: Monitor your progress with the progress bar
-- **Timer**: Watch the countdown (if enabled)
-
-### After the Test
-- **View Results**: See your score, correct/incorrect answers, and time taken
-- **Review Answers**: Click "راجع الإجابات" to see detailed breakdown
-- **Export Data**: Click "تصدير CSV" to download results
-- **New Test**: Click "اختبار جديد" to start over
-
-## ⚙️ Configuration
-
-### Settings Options
-- **عدد الأسئلة (Number of Questions)**: 5, 10, 15, 20, or 30 questions
-- **وضع المؤقت (Timer Mode)**:
-  - بدون مؤقت (No Timer): Unlimited time
-  - زمن لكل سؤال (Per Question): Individual time limits
-  - زمن إجمالي (Total Time): Overall time limit
-- **مدة المؤقت (Timer Duration)**: 5-300 seconds
-- **الصوت (Sound)**: Enable/disable audio feedback
-- **اللغة (Language)**: Arabic (default) or English
-
-### Keyboard Navigation
-- **Tab**: Navigate between elements
-- **Enter**: Activate buttons and confirm selections
-- **Arrow Keys**: Navigate within groups
-- **Escape**: Close modals and return to previous screen
-
-## 🧪 Testing
-
-### Running Unit Tests
-1. Open `tests/run-tests.html` in your browser
-2. Click "Run All Tests" to execute all test suites
-3. View results for each module:
-   - Question Generator Tests
-   - Timer Tests
-   - Storage Tests
-
-### Test Coverage
-- **Question Generation**: Validates factor ranges, answer options, and distractor algorithms
-- **Timer Functionality**: Tests countdown, callbacks, and edge cases
-- **Data Storage**: Verifies localStorage operations, statistics, and data integrity
-- **Error Handling**: Tests graceful failure scenarios
-
-## 🎨 Customization
-
-### Themes
-- **Light Theme**: Clean, modern interface (default)
-- **Dark Theme**: Easy on the eyes for low-light usage
-- **Auto Theme**: Respects system preference
-
-### Styling
-The application uses CSS custom properties for easy theming:
-```css
-:root {
-    --primary-color: #4f46e5;
-    --success-color: #10b981;
-    --error-color: #ef4444;
-    /* ... more variables */
-}
+```
+SuperMind-Trainer/
+├── index.html              # الصفحة الرئيسية
+├── training.html           # صفحة التدريب
+├── exam.html               # صفحة الاختبار
+├── results.html            # صفحة النتائج
+├── leaderboard.html        # صفحة لوحة النتائج
+├── manifest.json           # PWA manifest
+├── README.md               # هذا الملف
+│
+├── assets/
+│   ├── css/
+│   │   ├── main.css        # التنسيقات الرئيسية
+│   │   └── themes.css      # ثيمات الألوان
+│   │
+│   ├── js/
+│   │   ├── main.js         # تحكم الصفحة الرئيسية
+│   │   ├── training.js     # منطق التدريب
+│   │   ├── exam.js         # منطق الاختبار
+│   │   ├── results.js      # عرض النتائج
+│   │   ├── leaderboard.js  # لوحة النتائج
+│   │   ├── questionGenerator.js # توليد الأسئلة
+│   │   └── utils.js        # دوال مساعدة
+│   │
+│   ├── json/
+│   │   └── presets.json    # إعدادات جاهزة
+│   │
+│   └── sounds/
+│       ├── correct.mp3     # صوت الإجابة الصحيحة
+│       └── wrong.mp3       # صوت الإجابة الخاطئة
+│
+└── tests/
+    ├── questionGenerator.test.js # اختبارات توليد الأسئلة
+    └── scoring.test.js           # اختبارات التقييم
 ```
 
-### Adding New Languages
-1. Add translations to `UI.js` in the `translations` object
-2. Update language selector in `index.html`
-3. Test RTL/LTR layout support
+## 🔧 التطوير
 
-## 📊 Data Management
+### إضافة ميزات جديدة
+1. **إضافة نوع سؤال جديد**: عدّل `questionGenerator.js`
+2. **إضافة وضع جديد**: أنشئ ملف JS جديد وربطه بصفحة HTML
+3. **إضافة إعداد جديد**: عدّل `utils.js` وواجهة المستخدم
 
-### Local Storage
-- **Settings**: User preferences and configuration
-- **Statistics**: Test history and performance metrics
-- **Leaderboard**: High scores and player records
-- **Theme**: User's theme preference
+### تخصيص التصميم
+1. **تغيير الألوان**: عدّل متغيرات CSS في `themes.css`
+2. **تغيير الخطوط**: عدّل `font-family` في `main.css`
+3. **إضافة رسوم متحركة**: أضف CSS animations
 
-### Data Export
-- **CSV Format**: Compatible with Excel and Google Sheets
-- **JSON Export**: Full data backup and restore
-- **Print Support**: Printer-friendly result pages
+### إضافة لغات جديدة
+1. أضف ترجمات في `utils.js` في كائن `translations`
+2. أضف `data-xx` attributes في HTML
+3. أضف منطق التبديل في `Language.setLanguage()`
 
-### Privacy
-- All data stored locally in browser
-- No external servers or data collection
-- Full user control over data
+## 📱 PWA (Progressive Web App)
 
-## 🔧 Technical Details
+التطبيق يدعم PWA ويمكن تثبيته على الأجهزة:
 
-### Browser Requirements
-- **Modern Browsers**: Chrome 60+, Firefox 55+, Safari 12+, Edge 79+
-- **JavaScript**: ES6 modules support required
-- **CSS**: CSS Grid and Flexbox support
-- **Audio**: Web Audio API for sound generation
+### المميزات
+- **تثبيت على الجهاز**: إضافة أيقونة على الشاشة الرئيسية
+- **العمل بدون إنترنت**: تخزين محلي للبيانات
+- **اختصارات سريعة**: وصول مباشر للوظائف الرئيسية
+- **تجربة تطبيق أصلي**: واجهة مستخدم محسنة
 
-### Performance
-- **Lightweight**: No external dependencies
-- **Fast Loading**: Optimized assets and minimal bundle size
-- **Responsive**: Smooth animations and transitions
-- **Accessible**: WCAG 2.1 AA compliance
+### التثبيت
+1. افتح التطبيق في المتصفح
+2. ابحث عن أيقونة "تثبيت" في شريط العنوان
+3. اضغط "تثبيت" واتبع التعليمات
+4. استمتع بالتطبيق المثبت!
 
-### Architecture
-- **Modular Design**: Separated concerns with ES6 modules
-- **Event-Driven**: Clean separation between UI and logic
-- **Testable**: Unit tests for core functionality
-- **Maintainable**: Clear code structure and documentation
+## 🐛 الإبلاغ عن المشاكل
 
-## 🐛 Troubleshooting
+إذا واجهت أي مشاكل:
 
-### Common Issues
-1. **Tests not loading**: Ensure you're running from a local server
-2. **Audio not working**: Check browser audio permissions
-3. **RTL layout issues**: Verify Arabic font support
-4. **Timer not working**: Check browser compatibility
+1. **تحقق من المتصفح**: تأكد من استخدام متصفح حديث
+2. **امسح التخزين المحلي**: امسح localStorage إذا واجهت مشاكل
+3. **أعد تحميل الصفحة**: اضغط F5 أو Ctrl+R
+4. **تحقق من وحدة التحكم**: افتح Developer Tools وابحث عن أخطاء
 
-### Browser Compatibility
-- **Chrome**: Full support
-- **Firefox**: Full support
-- **Safari**: Full support (may need local server)
-- **Edge**: Full support
-- **Internet Explorer**: Not supported
+## 🤝 المساهمة
 
-### Performance Issues
-- **Slow loading**: Check network connection and browser cache
-- **Audio lag**: Reduce system load and close other tabs
-- **UI glitches**: Refresh page and clear browser cache
+نرحب بالمساهمات! يمكنك:
 
-## 🤝 Contributing
+1. **إضافة ميزات جديدة**
+2. **تحسين التصميم**
+3. **إضافة اختبارات**
+4. **ترجمة للغات أخرى**
+5. **إصلاح الأخطاء**
 
-### Development Setup
-1. Clone or download the project
-2. Set up a local server
-3. Make changes to the code
-4. Test thoroughly
-5. Run unit tests
-6. Submit improvements
+## 📄 الترخيص
 
-### Code Style
-- **JavaScript**: ES6+ with modules
-- **CSS**: BEM methodology with custom properties
-- **HTML**: Semantic markup with accessibility attributes
-- **Comments**: Clear documentation in Arabic and English
+هذا المشروع مفتوح المصدر ومتاح للاستخدام التعليمي.
 
-## 📄 License
+## 📞 الدعم
 
-This project is open source and available under the MIT License.
-
-## 🙏 Acknowledgments
-
-- **Arabic Typography**: Cairo font family for beautiful Arabic text
-- **Icons**: Unicode emoji for cross-platform compatibility
-- **Accessibility**: WCAG guidelines for inclusive design
-- **Testing**: Custom test framework for reliability
-
-## 📞 Support
-
-For issues, questions, or contributions:
-1. Check the troubleshooting section
-2. Review the code documentation
-3. Run the unit tests
-4. Create an issue with detailed information
+للحصول على الدعم أو الاستفسارات:
+- أنشئ issue في GitHub
+- راسلنا عبر البريد الإلكتروني
+- شارك في المناقشات
 
 ---
 
-**SuperMind-Train - تدريب سوبر مايند** - Making multiplication learning fun and effective! 🎯
+**استمتع بالتعلم مع تدريب سوبرمايد! 🧠✨**

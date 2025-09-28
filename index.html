@@ -3,206 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SuperMind-Train - تدريب سوبر مايند: تطبيق ويب متكامل لتدريب الطلاب على جدول الضرب مع واجهة عربية ودعم RTL">
-    <meta name="keywords" content="multiplication, math, education, arabic, RTL, training, quiz, accessibility">
-    <meta name="author" content="SuperMind-Train">
-    <meta name="robots" content="index, follow">
-    <title>SuperMind-Train - تدريب سوبر مايند</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>تدريب سوبرمايد - SuperMind Trainer</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="description" content="تطبيق تدريب الطلاب على جدول الضرب بطريقة تفاعلية وممتعة">
 </head>
-<body>
-    <!-- Header -->
+<body class="light-theme">
     <header class="header">
         <div class="container">
+            <h1 class="logo">
+                <span class="logo-icon">🧠</span>
+                تدريب سوبرمايد
+            </h1>
             <div class="header-controls">
-                <button id="settings-btn" class="btn btn-secondary">إعدادات</button>
-                <button id="theme-toggle" class="btn btn-icon" aria-label="تبديل الوضع المظلم">
+                <button id="theme-toggle" class="btn btn-icon" aria-label="تبديل الثيم">
                     <span class="theme-icon">🌙</span>
                 </button>
+                <button id="language-toggle" class="btn btn-icon" aria-label="تبديل اللغة">
+                    <span class="lang-icon">🇺🇸</span>
+                </button>
             </div>
-            <h1 class="logo">SuperMind-Train</h1>
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="main">
         <div class="container">
-            <!-- Welcome Screen -->
-            <section id="welcome-screen" class="screen active">
-                <div class="welcome-content">
-                    <h2>مرحباً بك في SuperMind-Train</h2>
-                    <p>اختر وضع التدريب المناسب لك وابدأ رحلة التعلم</p>
-                    
-                    <div class="mode-selection">
-                        <button id="practice-mode" class="mode-btn">
-                            <div class="mode-icon">📚</div>
-                            <h3>وضع الممارسة</h3>
-                            <p>تدرب بدون ضغط زمني</p>
-                        </button>
-                        <button id="exam-mode" class="mode-btn">
-                            <div class="mode-icon">📝</div>
-                            <h3>وضع الاختبار</h3>
-                            <p>اختبار مع زمن محدد</p>
-                        </button>
-                    </div>
+            <div class="welcome-section">
+                <h2 class="welcome-title" data-ar="مرحباً بك في تدريب سوبرمايد" data-en="Welcome to SuperMind Trainer">
+                    مرحباً بك في تدريب سوبرمايد
+                </h2>
+                <p class="welcome-description" data-ar="اختر نوع التدريب المناسب لك" data-en="Choose the training mode that suits you">
+                    اختر نوع التدريب المناسب لك
+                </p>
+            </div>
 
-                    <div class="quick-stats">
-                        <h3>إحصائيات سريعة</h3>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <span class="stat-number" id="total-tests">0</span>
-                                <span class="stat-label">اختبارات مكتملة</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-number" id="best-score">0%</span>
-                                <span class="stat-label">أفضل نتيجة</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Settings Modal -->
-            <section id="settings-modal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2>إعدادات الاختبار</h2>
-                        <button id="close-settings" class="btn btn-icon" aria-label="إغلاق">×</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="setting-group">
-                            <label for="question-count">عدد الأسئلة</label>
-                            <select id="question-count">
-                                <option value="5">5 أسئلة</option>
-                                <option value="10" selected>10 أسئلة</option>
-                                <option value="15">15 سؤال</option>
-                                <option value="20">20 سؤال</option>
-                                <option value="30">30 سؤال</option>
-                            </select>
-                        </div>
-
-                        <div class="setting-group">
-                            <label for="timer-mode">وضع المؤقت</label>
-                            <select id="timer-mode">
-                                <option value="off">بدون مؤقت</option>
-                                <option value="per-question">زمن لكل سؤال</option>
-                                <option value="total-time">زمن إجمالي</option>
-                            </select>
-                        </div>
-
-                        <div class="setting-group" id="timer-settings">
-                            <label for="timer-duration">مدة المؤقت (ثواني)</label>
-                            <input type="number" id="timer-duration" min="5" max="300" value="30">
-                        </div>
-
-                        <div class="setting-group">
-                            <label for="sound-enabled">الصوت</label>
-                            <div class="toggle-switch">
-                                <input type="checkbox" id="sound-enabled" checked>
-                                <label for="sound-enabled" class="toggle-label"></label>
-                            </div>
-                        </div>
-
-                        <div class="setting-group">
-                            <label for="language">اللغة</label>
-                            <select id="language">
-                                <option value="ar" selected>العربية</option>
-                                <option value="en">English</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="save-settings" class="btn btn-primary">حفظ الإعدادات</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Test Screen -->
-            <section id="test-screen" class="screen">
-                <div class="test-header">
-                    <div class="progress-info">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="تقدم الاختبار">
-                            <div id="progress-fill" class="progress-fill"></div>
-                        </div>
-                        <span id="question-counter" aria-live="polite">سؤال 1 من 10</span>
-                    </div>
-                    <div class="timer-display" id="timer-display" aria-live="assertive" aria-label="الوقت المتبقي">
-                        <span id="timer-text">00:30</span>
-                    </div>
+            <div class="mode-selection">
+                <div class="mode-card" data-mode="training">
+                    <div class="mode-icon">📚</div>
+                    <h3 class="mode-title" data-ar="وضع التدريب" data-en="Training Mode">وضع التدريب</h3>
+                    <p class="mode-description" data-ar="تدرب على جدول الضرب مع ملاحظات فورية" data-en="Practice multiplication with instant feedback">
+                        تدرب على جدول الضرب مع ملاحظات فورية
+                    </p>
+                    <button class="btn btn-primary mode-btn" data-mode="training">
+                        <span data-ar="ابدأ التدريب" data-en="Start Training">ابدأ التدريب</span>
+                    </button>
                 </div>
 
-                <div class="question-container">
-                    <div class="question">
-                        <h2 id="question-text">5 × 23 = ?</h2>
-                    </div>
-                    
-                    <div class="answers-grid" role="group" aria-label="خيارات الإجابة">
-                        <button class="answer-btn" data-answer="115" aria-label="الإجابة الأولى: 115">115</button>
-                        <button class="answer-btn" data-answer="125" aria-label="الإجابة الثانية: 125">125</button>
-                        <button class="answer-btn" data-answer="105" aria-label="الإجابة الثالثة: 105">105</button>
-                        <button class="answer-btn" data-answer="135" aria-label="الإجابة الرابعة: 135">135</button>
-                    </div>
+                <div class="mode-card" data-mode="exam">
+                    <div class="mode-icon">📝</div>
+                    <h3 class="mode-title" data-ar="وضع الاختبار" data-en="Exam Mode">وضع الاختبار</h3>
+                    <p class="mode-description" data-ar="اختبر معرفتك مع تقييم نهائي" data-en="Test your knowledge with final evaluation">
+                        اختبر معرفتك مع تقييم نهائي
+                    </p>
+                    <button class="btn btn-primary mode-btn" data-mode="exam">
+                        <span data-ar="ابدأ الاختبار" data-en="Start Exam">ابدأ الاختبار</span>
+                    </button>
                 </div>
 
-                <div class="test-controls">
-                    <button id="next-question" class="btn btn-primary" disabled>التالي</button>
-                    <button id="end-test" class="btn btn-secondary">إنهاء الاختبار</button>
+                <div class="mode-card" data-mode="leaderboard">
+                    <div class="mode-icon">🏆</div>
+                    <h3 class="mode-title" data-ar="لوحة النتائج" data-en="Leaderboard">لوحة النتائج</h3>
+                    <p class="mode-description" data-ar="شاهد أفضل النتائج المحفوظة" data-en="View your best saved scores">
+                        شاهد أفضل النتائج المحفوظة
+                    </p>
+                    <button class="btn btn-secondary mode-btn" data-mode="leaderboard">
+                        <span data-ar="عرض النتائج" data-en="View Results">عرض النتائج</span>
+                    </button>
                 </div>
-            </section>
+            </div>
 
-            <!-- Results Screen -->
-            <section id="results-screen" class="screen">
-                <div class="results-content">
-                    <div class="score-display">
-                        <h2>نتيجة الاختبار</h2>
-                        <div class="score-circle">
-                            <span id="score-percentage">85%</span>
-                        </div>
-                        <p id="score-description">ممتاز! لقد حصلت على 17 من 20</p>
-                    </div>
-
-                    <div class="results-details">
-                        <div class="detail-item">
-                            <span class="detail-label">الأسئلة الصحيحة:</span>
-                            <span id="correct-count">17</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">الأسئلة الخاطئة:</span>
-                            <span id="incorrect-count">3</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">الوقت المستغرق:</span>
-                            <span id="total-time">5:23</span>
-                        </div>
-                    </div>
-
-                    <div class="results-actions">
-                        <button id="review-answers" class="btn btn-secondary">راجع الإجابات</button>
-                        <button id="export-csv" class="btn btn-outline">تصدير CSV</button>
-                        <button id="new-test" class="btn btn-primary">اختبار جديد</button>
-                    </div>
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-questions">0</div>
+                    <div class="stat-label" data-ar="إجمالي الأسئلة" data-en="Total Questions">إجمالي الأسئلة</div>
                 </div>
-            </section>
-
-            <!-- Leaderboard Screen -->
-            <section id="leaderboard-screen" class="screen">
-                <div class="leaderboard-content">
-                    <h2>لوحة النتائج</h2>
-                    <div id="leaderboard-list" class="leaderboard-list">
-                        <!-- Leaderboard entries will be populated here -->
-                    </div>
-                    <button id="back-to-welcome" class="btn btn-primary">العودة للرئيسية</button>
+                <div class="stat-card">
+                    <div class="stat-number" id="best-score">0%</div>
+                    <div class="stat-label" data-ar="أفضل نتيجة" data-en="Best Score">أفضل نتيجة</div>
                 </div>
-            </section>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-time">0</div>
+                    <div class="stat-label" data-ar="إجمالي الوقت" data-en="Total Time">إجمالي الوقت</div>
+                </div>
+            </div>
         </div>
     </main>
 
-    <!-- Audio Elements are generated programmatically by SoundManager -->
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal" role="dialog" aria-labelledby="settings-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="settings-title" data-ar="إعدادات الاختبار" data-en="Test Settings">إعدادات الاختبار</h2>
+                <button class="modal-close" aria-label="إغلاق">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="settings-form">
+                    <div class="form-group">
+                        <label for="question-count" data-ar="عدد الأسئلة" data-en="Number of Questions">عدد الأسئلة</label>
+                        <select id="question-count" name="questionCount">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                        </select>
+                    </div>
 
-    <!-- Scripts -->
-    <script type="module" src="js/app.js"></script>
+                    <div class="form-group">
+                        <label for="timer-mode" data-ar="وضع المؤقت" data-en="Timer Mode">وضع المؤقت</label>
+                        <select id="timer-mode" name="timerMode">
+                            <option value="off" data-ar="بدون مؤقت" data-en="No Timer">بدون مؤقت</option>
+                            <option value="per-question" data-ar="مؤقت لكل سؤال" data-en="Per Question">مؤقت لكل سؤال</option>
+                            <option value="total-time" data-ar="مؤقت إجمالي" data-en="Total Time">مؤقت إجمالي</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="timer-duration-group" style="display: none;">
+                        <label for="timer-duration" data-ar="مدة المؤقت (ثانية)" data-en="Timer Duration (seconds)">مدة المؤقت (ثانية)</label>
+                        <input type="number" id="timer-duration" name="timerDuration" min="5" max="300" value="30">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="sound-enabled" name="soundEnabled" checked>
+                            <span class="checkmark"></span>
+                            <span data-ar="تفعيل الأصوات" data-en="Enable Sounds">تفعيل الأصوات</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="show-hints" name="showHints">
+                            <span class="checkmark"></span>
+                            <span data-ar="إظهار تلميحات" data-en="Show Hints">إظهار تلميحات</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancel-settings">
+                    <span data-ar="إلغاء" data-en="Cancel">إلغاء</span>
+                </button>
+                <button type="button" class="btn btn-primary" id="start-test">
+                    <span data-ar="ابدأ" data-en="Start">ابدأ</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p data-ar="© 2024 تدريب سوبرمايد - تطوير تعليمي تفاعلي" data-en="© 2024 SuperMind Trainer - Interactive Educational Development">
+                © 2024 تدريب سوبرمايد - تطوير تعليمي تفاعلي
+            </p>
+        </div>
+    </footer>
+
+    <script type="module" src="assets/js/utils.js"></script>
+    <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>

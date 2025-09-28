@@ -1,0 +1,143 @@
+/* SuperMind Trainer - Themes CSS */
+
+/* Light Theme (Default) */
+.light-theme {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --bg-card: #ffffff;
+  --bg-modal: rgba(0, 0, 0, 0.5);
+  
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
+  
+  --border-color: #e5e7eb;
+  --border-hover: #d1d5db;
+  --border-focus: #4f46e5;
+}
+
+/* Dark Theme */
+.dark-theme {
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --bg-tertiary: #374151;
+  --bg-card: #1f2937;
+  --bg-modal: rgba(0, 0, 0, 0.7);
+  
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
+  
+  --border-color: #374151;
+  --border-hover: #4b5563;
+  --border-focus: #6366f1;
+}
+
+/* Theme transition */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme toggle button styles */
+.theme-icon {
+  transition: transform 0.3s ease;
+}
+
+.light-theme .theme-icon {
+  transform: rotate(0deg);
+}
+
+.dark-theme .theme-icon {
+  transform: rotate(180deg);
+}
+
+/* Language toggle */
+.lang-icon {
+  font-size: 1.2rem;
+}
+
+/* RTL Support */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .math-problem {
+  direction: ltr;
+  text-align: center;
+}
+
+[dir="rtl"] .answer-btn {
+  text-align: right;
+}
+
+[dir="rtl"] .modal-footer {
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .header-controls {
+  flex-direction: row-reverse;
+}
+
+/* LTR Support */
+[dir="ltr"] {
+  text-align: left;
+}
+
+[dir="ltr"] .math-problem {
+  direction: ltr;
+  text-align: center;
+}
+
+[dir="ltr"] .answer-btn {
+  text-align: left;
+}
+
+[dir="ltr"] .modal-footer {
+  justify-content: flex-end;
+}
+
+/* Language-specific styles */
+[lang="ar"] {
+  font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+}
+
+[lang="en"] {
+  font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+}
+
+/* Responsive theme adjustments */
+@media (max-width: 640px) {
+  .theme-icon,
+  .lang-icon {
+    font-size: 1rem;
+  }
+}
+
+/* High contrast theme support */
+@media (prefers-contrast: high) {
+  .light-theme {
+    --border-color: #000000;
+    --text-secondary: #000000;
+    --bg-secondary: #f0f0f0;
+  }
+  
+  .dark-theme {
+    --border-color: #ffffff;
+    --text-secondary: #ffffff;
+    --bg-secondary: #2a2a2a;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .theme-icon {
+    transition: none;
+  }
+  
+  body {
+    transition: none;
+  }
+}
