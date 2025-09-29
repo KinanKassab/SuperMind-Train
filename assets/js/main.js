@@ -124,7 +124,7 @@ export class MainController {
         this.showSettingsModal('exam');
         break;
       case 'leaderboard':
-        window.location.href = 'leaderboard.html';
+        window.location.href = 'assets/html/leaderboard.html';
         break;
     }
   }
