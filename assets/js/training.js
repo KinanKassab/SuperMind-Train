@@ -151,7 +151,7 @@ export class TrainingController {
     const defaultSettings = {
       questionCount: 10,
       timerMode: 'off',
-      timerDuration: 30,
+      timerDuration: 4,
       soundEnabled: true,
       difficulty: 'normal'
     };
