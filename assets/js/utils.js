@@ -569,14 +569,16 @@ export const Language = {
         icon = document.createElement('img');
         icon.className = 'back-icon';
         icon.alt = 'Back';
+        icon.style.width = '16px';
+        icon.style.height = '16px';
         btn.insertBefore(icon, btn.firstChild);
       }
       
       // Set icon based on language
       if (this.current === 'ar') {
-        icon.src = 'assets/icons/LeftArrow.png';
+        icon.src = '../icons/LeftArrow.png';
       } else {
-        icon.src = 'assets/icons/RightArrow.png';
+        icon.src = '../icons/RightArrow.png';
       }
     });
   },

@@ -221,29 +221,40 @@ export class ResultsController {
     const { averageResponseTime, score } = this.currentResult;
     const previousResults = this.getPreviousResults();
     const previousScore = this.getPreviousBestScore(previousResults);
+    const currentLang = document.documentElement.lang;
 
     // Update average response time
-    this.elements.avgResponseTimeEl.textContent = `متوسط الوقت: ${formatTime(Math.floor(averageResponseTime / 1000))}`;
+    const avgTimeText = currentLang === 'ar' ? 
+      `متوسط الوقت: ${formatTime(Math.floor(averageResponseTime / 1000))}` : 
+      `Average time: ${formatTime(Math.floor(averageResponseTime / 1000))}`;
+    this.elements.avgResponseTimeEl.innerHTML = `<span data-ar="متوسط الوقت: ${formatTime(Math.floor(averageResponseTime / 1000))}" data-en="Average time: ${formatTime(Math.floor(averageResponseTime / 1000))}">${avgTimeText}</span>`;
 
     // Update accuracy rate
-    this.elements.accuracyRateEl.textContent = `معدل الدقة: ${score}%`;
+    const accuracyText = currentLang === 'ar' ? `معدل الدقة: ${score}%` : `Accuracy rate: ${score}%`;
+    this.elements.accuracyRateEl.innerHTML = `<span data-ar="معدل الدقة: ${score}%" data-en="Accuracy rate: ${score}%">${accuracyText}</span>`;
 
     // Update progress indicator
+    let progressText = '';
+    let progressColor = '';
+    
     if (previousScore > 0) {
       if (score > previousScore) {
-        this.elements.progressIndicatorEl.textContent = 'تحسن مقارنة بالجلسة السابقة';
-        this.elements.progressIndicatorEl.style.color = 'var(--success-color)';
+        progressText = currentLang === 'ar' ? 'تحسن مقارنة بالجلسة السابقة' : 'Improved from last session';
+        progressColor = 'var(--success-color)';
       } else if (score < previousScore) {
-        this.elements.progressIndicatorEl.textContent = 'انخفاض مقارنة بالجلسة السابقة';
-        this.elements.progressIndicatorEl.style.color = 'var(--warning-color)';
+        progressText = currentLang === 'ar' ? 'انخفاض مقارنة بالجلسة السابقة' : 'Decreased from last session';
+        progressColor = 'var(--warning-color)';
       } else {
-        this.elements.progressIndicatorEl.textContent = 'نفس مستوى الجلسة السابقة';
-        this.elements.progressIndicatorEl.style.color = 'var(--text-secondary)';
+        progressText = currentLang === 'ar' ? 'نفس مستوى الجلسة السابقة' : 'Same as last session';
+        progressColor = 'var(--text-secondary)';
       }
     } else {
-      this.elements.progressIndicatorEl.textContent = 'هذه أول جلسة لك';
-      this.elements.progressIndicatorEl.style.color = 'var(--primary-color)';
+      progressText = currentLang === 'ar' ? 'هذه أول جلسة لك' : 'This is your first session';
+      progressColor = 'var(--primary-color)';
     }
+    
+    this.elements.progressIndicatorEl.innerHTML = `<span data-ar="${progressText}" data-en="${progressText}">${progressText}</span>`;
+    this.elements.progressIndicatorEl.style.color = progressColor;
   }
 
   /**

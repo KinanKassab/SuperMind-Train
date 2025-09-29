@@ -231,15 +231,14 @@ export class TrainingController {
   selectAnswer(position) {
     if (this.isAnswered) return;
 
+    // Remove previous selection
+    this.elements.answerOptionsEl.querySelectorAll('.answer-btn').forEach(btn => {
+      btn.classList.remove('selected');
+    });
+    
     // Find and select the clicked button
     const selectedBtn = this.elements.answerOptionsEl.querySelector(`[data-answer="${position}"]`);
     if (selectedBtn) {
-      // Remove previous selection
-      this.elements.answerOptionsEl.querySelectorAll('.answer-btn').forEach(btn => {
-        btn.classList.remove('selected');
-      });
-      
-      // Add selection to clicked button
       selectedBtn.classList.add('selected');
     }
   }
@@ -282,14 +281,11 @@ export class TrainingController {
     // Update stats
     this.updateStats();
 
-    // Clear selected state
-    this.elements.answerOptionsEl.querySelectorAll('.answer-btn').forEach(btn => {
-      btn.classList.remove('selected');
-    });
 
     // Disable all answer buttons
     this.elements.answerOptionsEl.querySelectorAll('.answer-btn').forEach(btn => {
       btn.disabled = true;
+      btn.classList.remove('selected'); // Clear selected state
       if (btn.dataset.answer == selectedPosition) {
         btn.classList.add(isCorrect ? 'correct' : 'wrong');
       } else if (this.currentQuestion.options.find(opt => 
@@ -304,7 +300,7 @@ export class TrainingController {
     // Auto move to next question after delay
     setTimeout(() => {
       this.nextQuestion();
-    }, 1500);
+    }, 1000);
   }
 
   /**
