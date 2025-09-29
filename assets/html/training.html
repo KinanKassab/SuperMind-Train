@@ -23,7 +23,7 @@
                 <span class="logo-icon" aria-hidden="true">
                     <img src="../favicon.ico" alt="SuperMind Trainer" style="width: 24px; height: 24px;">
                 </span>
-                <span class="logo-text" data-ar="وضع التدريب">وضع التدريب</span>
+                <span class="logo-text" data-ar="وضع التدريب" data-en="Training Mode">وضع التدريب</span>
             </a>
             
             <!-- Header Controls - Right side with proper ARIA labels -->
@@ -38,11 +38,18 @@
                     <span class="theme-icon" aria-hidden="true">🌙</span>
                 </button>
                 <button 
+                    id="language-toggle" 
+                    class="btn btn-icon" 
+                    type="button"
+                    aria-label="تبديل اللغة بين العربية والإنجليزية"
+                    aria-pressed="false"
+                    title="تبديل اللغة">
+                    <span class="lang-icon" aria-hidden="true">EN</span>
+                </button>
+                <button 
                     id="back-btn" 
                     class="btn btn-secondary" 
                     type="button"
-                    data-ar="العودة" 
-                    data-en="Back"
                     aria-label="العودة إلى الصفحة الرئيسية"
                     title="العودة">
                     <span data-ar="العودة" data-en="Back">العودة</span>

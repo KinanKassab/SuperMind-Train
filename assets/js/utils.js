@@ -524,6 +524,8 @@ export const Language = {
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     Storage.save('language', lang);
     this.updateTexts();
+    this.updatePlaceholders();
+    this.updateLogoText();
   },
   
   updateTexts() {
@@ -531,13 +533,31 @@ export const Language = {
     elements.forEach(element => {
       const text = element.getAttribute(`data-${this.current}`);
       if (text) {
-        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-          element.placeholder = text;
-        } else {
+        if (element.tagName !== 'INPUT' && element.tagName !== 'TEXTAREA') {
           element.textContent = text;
         }
       }
     });
+  },
+  
+  updatePlaceholders() {
+    const elements = document.querySelectorAll('[data-placeholder-ar][data-placeholder-en]');
+    elements.forEach(element => {
+      const placeholder = element.getAttribute(`data-placeholder-${this.current}`);
+      if (placeholder && (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA')) {
+        element.placeholder = placeholder;
+      }
+    });
+  },
+  
+  updateLogoText() {
+    const logoText = document.querySelector('.logo-text');
+    if (logoText) {
+      const text = logoText.getAttribute(`data-${this.current}`);
+      if (text) {
+        logoText.textContent = text;
+      }
+    }
   },
   
   getText(key) {
@@ -612,4 +632,13 @@ document.addEventListener('DOMContentLoaded', () => {
   
   Theme.setTheme(savedTheme);
   Language.setLanguage(savedLanguage);
+  
+  // Update language toggle icon
+  const langToggle = document.getElementById('language-toggle');
+  if (langToggle) {
+    const icon = langToggle.querySelector('.lang-icon');
+    if (icon) {
+      icon.textContent = savedLanguage === 'ar' ? 'EN' : 'ع';
+    }
+  }
 });

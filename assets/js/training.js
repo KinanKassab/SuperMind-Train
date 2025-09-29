@@ -127,6 +127,21 @@ export class TrainingController {
         this.updateThemeIcon();
       });
     }
+
+    // Language toggle
+    const languageToggle = document.getElementById('language-toggle');
+    if (languageToggle) {
+      languageToggle.addEventListener('click', () => {
+        const currentLang = document.documentElement.lang;
+        const newLang = currentLang === 'ar' ? 'en' : 'ar';
+        
+        document.documentElement.lang = newLang;
+        document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
+        Storage.save('language', newLang);
+        this.updateLanguageIcon();
+        this.updateTexts();
+      });
+    }
   }
 
   /**
@@ -553,6 +568,43 @@ export class TrainingController {
       const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
       icon.textContent = currentTheme === 'light' ? '🌙' : '☀️';
     }
+  }
+
+  /**
+   * Update language icon
+   */
+  updateLanguageIcon() {
+    const icon = document.querySelector('.lang-icon');
+    if (icon) {
+      const currentLang = document.documentElement.lang;
+      icon.textContent = currentLang === 'ar' ? 'EN' : 'ع';
+    }
+  }
+
+  /**
+   * Update all text elements based on current language
+   */
+  updateTexts() {
+    const currentLang = document.documentElement.lang;
+    const elements = document.querySelectorAll('[data-ar][data-en]');
+    
+    elements.forEach(element => {
+      const text = element.getAttribute(`data-${currentLang}`);
+      if (text) {
+        if (element.tagName !== 'INPUT' && element.tagName !== 'TEXTAREA') {
+          element.textContent = text;
+        }
+      }
+    });
+    
+    // Update placeholders
+    const placeholderElements = document.querySelectorAll('[data-placeholder-ar][data-placeholder-en]');
+    placeholderElements.forEach(element => {
+      const placeholder = element.getAttribute(`data-placeholder-${currentLang}`);
+      if (placeholder && (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA')) {
+        element.placeholder = placeholder;
+      }
+    });
   }
 }
 

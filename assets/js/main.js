@@ -243,11 +243,16 @@ export class MainController {
     const currentLang = document.documentElement.lang;
     const newLang = currentLang === 'ar' ? 'en' : 'ar';
     
-    document.documentElement.lang = newLang;
-    document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
-    Storage.save('language', newLang);
+    // Use the Language utility from utils.js
+    if (window.Language) {
+      window.Language.setLanguage(newLang);
+    } else {
+      document.documentElement.lang = newLang;
+      document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
+      Storage.save('language', newLang);
+      this.updateTexts();
+    }
     this.updateLanguageIcon();
-    this.updateTexts();
   }
 
   /**
@@ -268,7 +273,7 @@ export class MainController {
     const icon = this.elements.languageToggle?.querySelector('.lang-icon');
     if (icon) {
       const currentLang = document.documentElement.lang;
-      icon.textContent = currentLang === 'ar' ? '🇺🇸' : '🇸🇦';
+      icon.textContent = currentLang === 'ar' ? 'EN' : 'ع';
     }
   }
 
@@ -282,11 +287,18 @@ export class MainController {
     elements.forEach(element => {
       const text = element.getAttribute(`data-${currentLang}`);
       if (text) {
-        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-          element.placeholder = text;
-        } else {
+        if (element.tagName !== 'INPUT' && element.tagName !== 'TEXTAREA') {
           element.textContent = text;
         }
+      }
+    });
+    
+    // Update placeholders
+    const placeholderElements = document.querySelectorAll('[data-placeholder-ar][data-placeholder-en]');
+    placeholderElements.forEach(element => {
+      const placeholder = element.getAttribute(`data-placeholder-${currentLang}`);
+      if (placeholder && (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA')) {
+        element.placeholder = placeholder;
       }
     });
     
@@ -300,21 +312,9 @@ export class MainController {
   updateLogoText(lang) {
     const logoText = document.querySelector('.logo-text');
     if (logoText) {
-      if (lang === 'en') {
-        // Show English text based on current page
-        const currentPage = this.getCurrentPageType();
-        const englishTexts = {
-          'index': 'SuperMind Trainer',
-          'training': 'Training Mode',
-          'exam': 'Exam Mode',
-          'results': 'Results',
-          'leaderboard': 'Leaderboard'
-        };
-        logoText.textContent = englishTexts[currentPage] || 'SuperMind Trainer';
-      } else {
-        // Show Arabic text - get from data attribute or default
-        const arabicText = logoText.getAttribute('data-ar') || 'تدريب سوبرمايد';
-        logoText.textContent = arabicText;
+      const text = logoText.getAttribute(`data-${lang}`);
+      if (text) {
+        logoText.textContent = text;
       }
     }
   }

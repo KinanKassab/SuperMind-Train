@@ -24,7 +24,7 @@
                 <span class="logo-icon" aria-hidden="true">
                     <img src="favicon.ico" alt="SuperMind Trainer" style="width: 24px; height: 24px;">
                 </span>
-                <span class="logo-text" data-ar="تدريب سوبرمايد">تدريب سوبرمايد</span>
+                <span class="logo-text" data-ar="تدريب سوبرمايد" data-en="SuperMind Trainer">تدريب سوبرمايد</span>
             </a>
             
             <!-- Header Controls - Right side with proper ARIA labels -->
@@ -108,7 +108,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="total-time">0</div>
-                    <div class="stat-label" data-ar="إجمالي الوقت بالدقايق" data-en="Total Time In Minutes">إجمالي الوقت بالدقايق</div>
+                    <div class="stat-label" data-ar="إجمالي الوقت (دقائق)" data-en="Total Time (minutes)">إجمالي الوقت (دقائق)</div>
                 </div>
             </div>
         </div>
@@ -127,26 +127,28 @@
                 <form id="settings-form">
                     <div class="form-group">
                         <label for="question-count" data-ar="عدد الأسئلة" data-en="Number of Questions">عدد الأسئلة</label>
-                        <input type="number" id="question-count" name="questionCount" min="1" max="100" value="10">
+                        <input type="number" id="question-count" name="questionCount" min="1" max="100" value="10" 
+                               data-placeholder-ar="أدخل عدد الأسئلة" data-placeholder-en="Enter number of questions">
                     </div>
 
                     <div class="form-group">
                         <label for="timer-mode" data-ar="وضع المؤقت" data-en="Timer Mode">وضع المؤقت</label>
                         <select id="timer-mode" name="timerMode">
                             <option value="per-question" data-ar="مؤقت لكل سؤال" data-en="Per Question">مؤقت لكل سؤال</option>
-                            <option value="total-time" data-ar="مؤقت إجمالي" data-en="Total Time In Minutes">مؤقت إجمالي</option>
+                            <option value="total-time" data-ar="مؤقت إجمالي" data-en="Total Time">مؤقت إجمالي</option>
                         </select>
                     </div>
 
-                    <div class="form-group" id="timer-duration-group" style="display: none;">
+                    <div class="form-group" id="timer-duration-group">
                         <label for="timer-duration" data-ar="مدة المؤقت (ثانية)" data-en="Timer Duration (seconds)">مدة المؤقت (ثانية)</label>
-                        <input type="number" id="timer-duration" name="timerDuration" min="5" max="300" value="30">
+                        <input type="number" id="timer-duration" name="timerDuration" min="5" max="300" value="30"
+                               data-placeholder-ar="أدخل المدة بالثواني" data-placeholder-en="Enter duration in seconds">
                     </div>
 
                     <div class="form-group">
                         <label class="checkbox-label">
-                            <span data-ar="تفعيل الأصوات" data-en="Enable Sounds">تفعيل الأصوات</span>
                             <input type="checkbox" id="sound-enabled" name="soundEnabled" checked>
+                            <span data-ar="تفعيل الأصوات" data-en="Enable Sounds">تفعيل الأصوات</span>
                         </label>
                     </div>
 
