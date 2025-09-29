@@ -214,7 +214,7 @@ export function throttle(func, limit) {
  */
 export function playSound(soundType) {
   try {
-    const audio = new Audio(`../sounds${soundType}.mp3`);
+    const audio = new Audio(`../sounds/${soundType}.mp3`);
     audio.volume = 0.5;
     audio.play().catch(error => {
       console.warn('Could not play sound:', error);
