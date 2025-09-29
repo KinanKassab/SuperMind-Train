@@ -357,6 +357,21 @@ export class LeaderboardController {
     if (this.leaderboard.length === 0) return 0;
     return this.leaderboard.reduce((sum, score) => sum + score.score, 0) / this.leaderboard.length;
   }
+  
+  /**
+   * Calculate best score
+   */
+  calculateBestScore() {
+    if (this.leaderboard.length === 0) return 0;
+    return Math.max(...this.leaderboard.map(score => score.score));
+  }
+  
+  /**
+   * Calculate total time
+   */
+  calculateTotalTime() {
+    return this.leaderboard.reduce((sum, score) => sum + score.totalTime, 0);
+  }
 
   /**
    * Create achievement element

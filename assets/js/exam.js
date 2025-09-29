@@ -511,9 +511,14 @@ export class ExamController {
    */
   updateQuickStats() {
     const sessions = Storage.load('examSessions', []);
-    const totalQuestions = sessions.reduce((sum, session) => sum + session.totalQuestions, 0);
+    const trainingSessions = Storage.load('trainingSessions', []);
+    const allSessions = [...sessions, ...trainingSessions];
+    
+    const totalQuestions = allSessions.reduce((sum, session) => sum + session.totalQuestions, 0);
     const bestScore = sessions.length > 0 ? Math.max(...sessions.map(s => s.score)) : 0;
-    const totalTime = sessions.reduce((sum, session) => sum + session.totalTime, 0);
+    const trainingBestScore = trainingSessions.length > 0 ? Math.max(...trainingSessions.map(s => s.score)) : 0;
+    const overallBestScore = Math.max(bestScore, trainingBestScore);
+    const totalTime = allSessions.reduce((sum, session) => sum + session.totalTime, 0);
 
     const currentStats = Storage.load('quickStats', {
       totalQuestions: 0,
@@ -522,9 +527,9 @@ export class ExamController {
     });
 
     Storage.save('quickStats', {
-      totalQuestions: totalQuestions, // إزالة الجمع مع currentStats
-      bestScore: Math.max(currentStats.bestScore, bestScore),
-      totalTime: totalTime // إزالة الجمع مع currentStats
+      totalQuestions,
+      bestScore: Math.max(currentStats.bestScore, overallBestScore),
+      totalTime
     });
   }
 

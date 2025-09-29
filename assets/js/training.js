@@ -459,13 +459,24 @@ export class TrainingController {
    */
   updateQuickStats() {
     const sessions = Storage.load('trainingSessions', []);
-    const totalQuestions = sessions.reduce((sum, session) => sum + session.totalQuestions, 0);
+    const examSessions = Storage.load('examSessions', []);
+    const allSessions = [...sessions, ...examSessions];
+    
+    const totalQuestions = allSessions.reduce((sum, session) => sum + session.totalQuestions, 0);
     const bestScore = sessions.length > 0 ? Math.max(...sessions.map(s => s.score)) : 0;
-    const totalTime = sessions.reduce((sum, session) => sum + session.totalTime, 0);
+    const examBestScore = examSessions.length > 0 ? Math.max(...examSessions.map(s => s.score)) : 0;
+    const overallBestScore = Math.max(bestScore, examBestScore);
+    const totalTime = allSessions.reduce((sum, session) => sum + session.totalTime, 0);
+
+    const currentStats = Storage.load('quickStats', {
+      totalQuestions: 0,
+      bestScore: 0,
+      totalTime: 0
+    });
 
     Storage.save('quickStats', {
       totalQuestions,
-      bestScore,
+      bestScore: Math.max(currentStats.bestScore, overallBestScore),
       totalTime
     });
   }

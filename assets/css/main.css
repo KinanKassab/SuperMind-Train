@@ -341,11 +341,22 @@ body {
     height: 44px;
   }
   
+  .header-controls .btn-secondary {
+    width: 44px;
+    height: 44px;
+  }
+  
   .header-controls {
     gap: var(--spacing-sm);
   }
   
   .header-controls .btn-icon .lang-icon {
+    background-size: 22px 22px;
+    width: 22px;
+    height: 22px;
+  }
+  
+  .header-controls .btn-secondary .back-icon {
     background-size: 22px 22px;
     width: 22px;
     height: 22px;
@@ -363,6 +374,11 @@ body {
     height: 48px;
   }
   
+  .header-controls .btn-secondary {
+    width: 48px;
+    height: 48px;
+  }
+  
   .header-controls .btn-icon .theme-icon {
     font-size: var(--font-size-lg);
   }
@@ -372,57 +388,74 @@ body {
     width: 24px;
     height: 24px;
   }
+  
+  .header-controls .btn-secondary .back-icon {
+    background-size: 24px 24px;
+    width: 24px;
+    height: 24px;
+  }
 }
 
 /* Back Button Styling - Secondary button in header */
 .header-controls .btn-secondary {
-  /* Modern button styling */
-  background-color: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  /* Gradient background for modern look */
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  color: var(--text-inverse);
+  
+  /* Rounded corners */
   border-radius: 12px;
+  border: none;
   
   /* Size and spacing */
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
+  width: 40px;
+  height: 40px;
+  padding: 0;
   
   /* Interactive states */
   transition: all var(--transition-fast);
   cursor: pointer;
   
-  /* Typography */
-  letter-spacing: -0.01em;
-  
-  /* Flex layout for icon + text */
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
+  /* Focus and accessibility */
+  position: relative;
+  overflow: hidden;
 }
 
-/* Back button icon */
+/* Back button icon styling */
 .header-controls .btn-secondary .back-icon {
-  width: 16px;
-  height: 16px;
+  /* Hide text content and use SVG background */
+  font-size: 0;
+  text-indent: -9999px;
+  overflow: hidden;
+  
+  /* SVG background image */
+  background-image: url('../icons/LeftArrow.png');
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: center;
+  
+  /* Ensure proper sizing */
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  
+  /* Smooth transitions */
   transition: transform var(--transition-fast);
 }
 
-/* Back button icon animation on hover */
-.header-controls .btn-secondary:hover .back-icon {
-  transform: translateX(-2px);
+/* RTL support for back button icon */
+[dir="rtl"] .header-controls .btn-secondary .back-icon {
+  background-image: url('../icons/RightArrow.png');
 }
 
-/* RTL support for back button icon */
-[dir="rtl"] .header-controls .btn-secondary:hover .back-icon {
-  transform: translateX(2px);
+/* LTR support for back button icon */
+[dir="ltr"] .header-controls .btn-secondary .back-icon {
+  background-image: url('../icons/LeftArrow.png');
 }
 
 /* Back button hover effect */
 .header-controls .btn-secondary:hover {
-  background-color: var(--bg-secondary);
-  border-color: var(--border-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
 /* Back button active state */
@@ -436,17 +469,9 @@ body {
   outline-offset: 2px;
 }
 
-/* Dark theme back button */
-.dark-theme .header-controls .btn-secondary {
-  background-color: var(--bg-card);
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-
-.dark-theme .header-controls .btn-secondary:hover {
-  background-color: var(--bg-secondary);
-  border-color: var(--border-hover);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+/* Icon animation on hover */
+.header-controls .btn-secondary:hover .back-icon {
+  transform: scale(1.1);
 }
 
 /* Main content */

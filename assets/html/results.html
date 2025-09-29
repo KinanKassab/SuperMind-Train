@@ -29,6 +29,14 @@
             <!-- Header Controls - Right side with proper ARIA labels -->
             <nav class="header-controls" role="toolbar" aria-label="إعدادات التطبيق">
                 <button 
+                    id="back-btn" 
+                    class="btn btn-secondary" 
+                    type="button"
+                    aria-label="العودة إلى الصفحة الرئيسية"
+                    title="العودة">
+                    <span class="back-icon" aria-hidden="true"></span>
+                </button>
+                <button 
                     id="theme-toggle" 
                     class="btn btn-icon" 
                     type="button"
@@ -45,14 +53,6 @@
                     aria-pressed="false"
                     title="تبديل اللغة">
                     <span class="lang-icon" aria-hidden="true">EN</span>
-                </button>
-                <button 
-                    id="back-btn" 
-                    class="btn btn-secondary" 
-                    type="button"
-                    aria-label="العودة إلى الصفحة الرئيسية"
-                    title="العودة">
-                    <span data-ar="العودة" data-en="Back">العودة</span>
                 </button>
             </nav>
         </div>
