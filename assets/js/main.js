@@ -335,11 +335,28 @@ export class MainController {
    * Update quick stats display
    */
   updateQuickStats() {
-    const stats = Storage.load('quickStats', {
+    // Load all sessions to calculate accurate stats
+    const trainingSessions = Storage.load('trainingSessions', []);
+    const examSessions = Storage.load('examSessions', []);
+    const allSessions = [...trainingSessions, ...examSessions];
+    
+    const totalQuestions = allSessions.reduce((sum, session) => sum + session.totalQuestions, 0);
+    const bestScore = allSessions.length > 0 ? Math.max(...allSessions.map(s => s.score)) : 0;
+    const totalTime = allSessions.reduce((sum, session) => sum + session.totalTime, 0);
+    
+    const stats = {
       totalQuestions: 0,
       bestScore: 0,
       totalTime: 0
-    });
+    };
+    
+    // Update with calculated values
+    stats.totalQuestions = totalQuestions;
+    stats.bestScore = bestScore;
+    stats.totalTime = totalTime;
+    
+    // Save updated stats
+    Storage.save('quickStats', stats);
 
     if (this.elements.totalQuestionsEl) {
       this.elements.totalQuestionsEl.textContent = stats.totalQuestions;

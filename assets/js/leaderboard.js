@@ -148,7 +148,35 @@ export class LeaderboardController {
    * Load leaderboard data
    */
   loadLeaderboard() {
-    this.leaderboard = Storage.load('leaderboard', []);
+    // Load from both training and exam sessions
+    const trainingSessions = Storage.load('trainingSessions', []);
+    const examSessions = Storage.load('examSessions', []);
+    const savedLeaderboard = Storage.load('leaderboard', []);
+    
+    // Combine all sessions and convert to leaderboard format
+    const allSessions = [...trainingSessions, ...examSessions];
+    const sessionLeaderboard = allSessions.map(session => ({
+      id: session.id,
+      playerName: session.playerName || 'مجهول',
+      comment: session.comment || '',
+      type: session.type,
+      score: session.score,
+      correctCount: session.correctCount,
+      wrongCount: session.wrongCount,
+      totalQuestions: session.totalQuestions,
+      totalTime: session.totalTime,
+      difficulty: session.difficulty || 'normal',
+      timestamp: session.timestamp
+    }));
+    
+    // Combine with manually saved scores
+    this.leaderboard = [...savedLeaderboard, ...sessionLeaderboard];
+    
+    // Remove duplicates based on ID
+    this.leaderboard = this.leaderboard.filter((item, index, self) => 
+      index === self.findIndex(t => t.id === item.id)
+    );
+    
     this.applyFilters();
     this.updateStatistics();
     this.updateAchievements();
@@ -357,21 +385,6 @@ export class LeaderboardController {
     if (this.leaderboard.length === 0) return 0;
     return this.leaderboard.reduce((sum, score) => sum + score.score, 0) / this.leaderboard.length;
   }
-  
-  /**
-   * Calculate best score
-   */
-  calculateBestScore() {
-    if (this.leaderboard.length === 0) return 0;
-    return Math.max(...this.leaderboard.map(score => score.score));
-  }
-  
-  /**
-   * Calculate total time
-   */
-  calculateTotalTime() {
-    return this.leaderboard.reduce((sum, score) => sum + score.totalTime, 0);
-  }
 
   /**
    * Create achievement element
@@ -551,14 +564,14 @@ export class LeaderboardController {
         playerName: score.playerName,
         type: score.type,
         score: score.score,
-        correctAnswers: score.correctAnswers,
-        wrongAnswers: score.wrongAnswers,
+        correctAnswers: score.correctCount,
+        wrongAnswers: score.wrongCount,
         totalQuestions: score.totalQuestions,
         totalTime: score.totalTime,
         difficulty: score.difficulty,
-        date: score.date,
+        date: formatDate(score.timestamp),
         comment: score.comment || '',
-        questions: score.questions || []
+        timestamp: score.timestamp
       })),
       statistics: {
         totalTests: this.leaderboard.length,
@@ -567,6 +580,21 @@ export class LeaderboardController {
         totalTime: this.calculateTotalTime()
       }
     };
+  }
+
+  /**
+   * Get previous best score
+   */
+  getPreviousBestScore(results) {
+    if (results.length <= 1) return 0;
+    return results[1]?.score || 0;
+  }
+
+  /**
+   * Get previous results
+   */
+  getPreviousResults() {
+    return this.leaderboard.sort((a, b) => b.timestamp - a.timestamp);
   }
 
   /**

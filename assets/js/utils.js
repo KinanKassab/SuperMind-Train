@@ -562,25 +562,20 @@ export const Language = {
   },
   
   updateBackButtonIcon() {
-    const backBtns = document.querySelectorAll('#back-btn');
+    const backBtns = document.querySelectorAll('#back-btn .back-icon');
     backBtns.forEach(btn => {
-      let icon = btn.querySelector('.back-icon');
-      if (!icon) {
-        icon = document.createElement('img');
-        icon.className = 'back-icon';
-        icon.alt = 'Back';
-        icon.style.width = '16px';
-        icon.style.height = '16px';
-        btn.insertBefore(icon, btn.firstChild);
-      }
-      
       // Set icon based on language
       if (this.current === 'ar') {
-        icon.src = '../icons/LeftArrow.png';
+        btn.style.backgroundImage = "url('../icons/RightArrow.png')";
       } else {
-        icon.src = '../icons/RightArrow.png';
+        btn.style.backgroundImage = "url('../icons/LeftArrow.png')";
       }
     });
+    
+    // Also update via global function
+    if (typeof updateBackButtonIcons === 'function') {
+      updateBackButtonIcons();
+    }
   },
   
   getText(key) {
