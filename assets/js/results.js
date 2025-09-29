@@ -179,23 +179,35 @@ export class ResultsController {
     const questionEl = document.createElement('div');
     questionEl.className = `question-item ${question.isCorrect ? 'correct' : 'wrong'}`;
 
-    const userAnswer = question.userAnswer !== null ? question.userAnswer : 'لم يتم الإجابة';
+    const currentLang = document.documentElement.lang;
+    const userAnswer = question.userAnswer !== null ? question.userAnswer : 
+      (currentLang === 'ar' ? 'لم يتم الإجابة' : 'No answer');
     const responseTime = question.responseTime ? formatTime(Math.floor(question.responseTime / 1000)) : '0:00';
 
     questionEl.innerHTML = `
       <div class="question-header">
-        <span class="question-number">سؤال ${index + 1}</span>
+        <span class="question-number" data-ar="سؤال ${index + 1}" data-en="Question ${index + 1}">
+          ${currentLang === 'ar' ? `سؤال ${index + 1}` : `Question ${index + 1}`}
+        </span>
         <span class="question-status ${question.isCorrect ? 'correct' : 'wrong'}">
-          ${question.isCorrect ? 'صحيح' : 'خطأ'}
+          <span data-ar="${question.isCorrect ? 'صحيح' : 'خطأ'}" data-en="${question.isCorrect ? 'Correct' : 'Wrong'}">
+            ${question.isCorrect ? (currentLang === 'ar' ? 'صحيح' : 'Correct') : (currentLang === 'ar' ? 'خطأ' : 'Wrong')}
+          </span>
         </span>
       </div>
       <div class="question-problem">
         ${question.factorA} × ${question.factorB} = ${question.correctAnswer}
       </div>
       <div class="question-answer">
-        <span class="answer-given">إجابتك: ${userAnswer}</span>
-        <span class="answer-correct">الإجابة الصحيحة: ${question.correctAnswer}</span>
-        <span class="response-time">الوقت: ${responseTime}</span>
+        <span class="answer-given" data-ar="إجابتك: ${userAnswer}" data-en="Your answer: ${userAnswer}">
+          ${currentLang === 'ar' ? `إجابتك: ${userAnswer}` : `Your answer: ${userAnswer}`}
+        </span>
+        <span class="answer-correct" data-ar="الإجابة الصحيحة: ${question.correctAnswer}" data-en="Correct answer: ${question.correctAnswer}">
+          ${currentLang === 'ar' ? `الإجابة الصحيحة: ${question.correctAnswer}` : `Correct answer: ${question.correctAnswer}`}
+        </span>
+        <span class="response-time" data-ar="الوقت: ${responseTime}" data-en="Time: ${responseTime}">
+          ${currentLang === 'ar' ? `الوقت: ${responseTime}` : `Time: ${responseTime}`}
+        </span>
       </div>
     `;
 

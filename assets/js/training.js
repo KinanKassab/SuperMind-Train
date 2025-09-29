@@ -52,9 +52,6 @@ export class TrainingController {
       feedbackTextEl: document.getElementById('feedback-text'),
       feedbackExplanationEl: document.getElementById('feedback-explanation'),
       
-      // Action buttons
-      nextBtnEl: document.getElementById('next-btn'),
-      
       // Stats elements
       correctCountEl: document.getElementById('correct-count'),
       wrongCountEl: document.getElementById('wrong-count'),
@@ -80,6 +77,7 @@ export class TrainingController {
       const btn = e.target.closest('.answer-btn');
       if (btn && !this.isAnswered) {
         this.selectAnswer(parseInt(btn.dataset.answer));
+        this.submitAnswer();
       }
     });
 
@@ -90,6 +88,7 @@ export class TrainingController {
       if (e.key >= '1' && e.key <= '4') {
         e.preventDefault();
         this.selectAnswer(parseInt(e.key));
+        this.submitAnswer();
       } else if (e.key === 'Enter') {
         e.preventDefault();
         const selectedBtn = this.elements.answerOptionsEl.querySelector('.answer-btn.selected');
@@ -99,9 +98,6 @@ export class TrainingController {
       }
     });
 
-    // Action buttons
-    this.elements.nextBtnEl?.addEventListener('click', () => this.nextQuestion());
-    
     // Completion modal buttons
     this.elements.viewResultsBtnEl?.addEventListener('click', () => this.viewResults());
     this.elements.startNewTrainingBtnEl?.addEventListener('click', () => this.startNewTraining());
@@ -204,14 +200,6 @@ export class TrainingController {
     // Hide feedback
     this.elements.feedbackSectionEl.style.display = 'none';
 
-    // Reset button states
-    this.elements.nextBtnEl.style.display = 'none';
-
-    // Start question timer if enabled
-    if (this.settings.timerMode === 'per-question') {
-      this.startQuestionTimer();
-    }
-
     // Focus first answer button
     const firstBtn = this.elements.answerOptionsEl.querySelector('.answer-btn');
     if (firstBtn) {
@@ -243,14 +231,15 @@ export class TrainingController {
   selectAnswer(position) {
     if (this.isAnswered) return;
 
-    // Remove previous selection
-    this.elements.answerOptionsEl.querySelectorAll('.answer-btn').forEach(btn => {
-      btn.classList.remove('selected');
-    });
-
-    // Add selection to clicked button
+    // Find and select the clicked button
     const selectedBtn = this.elements.answerOptionsEl.querySelector(`[data-answer="${position}"]`);
     if (selectedBtn) {
+      // Remove previous selection
+      this.elements.answerOptionsEl.querySelectorAll('.answer-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      
+      // Add selection to clicked button
       selectedBtn.classList.add('selected');
     }
   }
@@ -273,11 +262,6 @@ export class TrainingController {
     const isCorrect = selectedOption.isCorrect;
     const responseTime = Date.now() - this.questionStartTime;
 
-    // Stop question timer
-    if (this.timer) {
-      this.timer.stop();
-    }
-
     // Update score
     if (isCorrect) {
       this.correctCount++;
@@ -298,8 +282,10 @@ export class TrainingController {
     // Update stats
     this.updateStats();
 
-    // Show next button
-    this.elements.nextBtnEl.style.display = 'block';
+    // Clear selected state
+    this.elements.answerOptionsEl.querySelectorAll('.answer-btn').forEach(btn => {
+      btn.classList.remove('selected');
+    });
 
     // Disable all answer buttons
     this.elements.answerOptionsEl.querySelectorAll('.answer-btn').forEach(btn => {
@@ -314,6 +300,11 @@ export class TrainingController {
 
     // Save question result
     this.saveQuestionResult(isCorrect, responseTime);
+
+    // Auto move to next question after delay
+    setTimeout(() => {
+      this.nextQuestion();
+    }, 1500);
   }
 
   /**
@@ -330,7 +321,6 @@ export class TrainingController {
     this.elements.feedbackCardEl.className = `feedback-card ${isCorrect ? 'correct' : 'wrong'}`;
     this.elements.feedbackSectionEl.style.display = 'block';
   }
-
 
   /**
    * Move to next question
@@ -370,54 +360,6 @@ export class TrainingController {
         this.elements.elapsedTimeEl.textContent = formatTime(elapsed);
       }
     }, 1000);
-  }
-
-  /**
-   * Start question timer
-   */
-  startQuestionTimer() {
-    if (this.timer) {
-      this.timer.stop();
-    }
-
-    this.timer = new Timer(
-      this.settings.timerDuration,
-      (remaining) => {
-        this.elements.timerTextEl.textContent = remaining;
-        this.elements.timerDisplayEl.style.display = 'block';
-        
-        if (remaining <= 5) {
-          this.elements.timerDisplayEl.style.animation = 'pulse 0.5s infinite';
-        }
-      },
-      () => {
-        // Time's up - auto submit if no answer selected
-        if (!this.isAnswered) {
-          this.autoSubmit();
-        }
-      }
-    );
-
-    this.timer.start();
-  }
-
-  /**
-   * Auto submit when time runs out
-   */
-  autoSubmit() {
-    if (this.isAnswered) return;
-
-    // Select first option if none selected
-    const selectedBtn = this.elements.answerOptionsEl.querySelector('.answer-btn.selected');
-    if (!selectedBtn) {
-      const firstBtn = this.elements.answerOptionsEl.querySelector('.answer-btn');
-      if (firstBtn) {
-        firstBtn.classList.add('selected');
-        this.submitAnswer();
-      }
-    } else {
-      this.submitAnswer();
-    }
   }
 
   /**

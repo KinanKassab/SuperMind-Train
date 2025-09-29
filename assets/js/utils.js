@@ -526,6 +526,7 @@ export const Language = {
     this.updateTexts();
     this.updatePlaceholders();
     this.updateLogoText();
+    this.updateBackButtonIcon();
   },
   
   updateTexts() {
@@ -558,6 +559,26 @@ export const Language = {
         logoText.textContent = text;
       }
     }
+  },
+  
+  updateBackButtonIcon() {
+    const backBtns = document.querySelectorAll('#back-btn');
+    backBtns.forEach(btn => {
+      let icon = btn.querySelector('.back-icon');
+      if (!icon) {
+        icon = document.createElement('img');
+        icon.className = 'back-icon';
+        icon.alt = 'Back';
+        btn.insertBefore(icon, btn.firstChild);
+      }
+      
+      // Set icon based on language
+      if (this.current === 'ar') {
+        icon.src = 'assets/icons/LeftArrow.png';
+      } else {
+        icon.src = 'assets/icons/RightArrow.png';
+      }
+    });
   },
   
   getText(key) {
@@ -632,6 +653,11 @@ document.addEventListener('DOMContentLoaded', () => {
   
   Theme.setTheme(savedTheme);
   Language.setLanguage(savedLanguage);
+  
+  // Initialize back button icons
+  setTimeout(() => {
+    Language.updateBackButtonIcon();
+  }, 100);
   
   // Update language toggle icon
   const langToggle = document.getElementById('language-toggle');

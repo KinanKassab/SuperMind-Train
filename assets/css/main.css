@@ -393,6 +393,28 @@ body {
   
   /* Typography */
   letter-spacing: -0.01em;
+  
+  /* Flex layout for icon + text */
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+/* Back button icon */
+.header-controls .btn-secondary .back-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--transition-fast);
+}
+
+/* Back button icon animation on hover */
+.header-controls .btn-secondary:hover .back-icon {
+  transform: translateX(-2px);
+}
+
+/* RTL support for back button icon */
+[dir="rtl"] .header-controls .btn-secondary:hover .back-icon {
+  transform: translateX(2px);
 }
 
 /* Back button hover effect */
