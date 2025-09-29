@@ -29,12 +29,15 @@ export class MainController {
       timerDurationGroup: document.getElementById('timer-duration-group'),
       timerDurationInput: document.getElementById('timer-duration'),
       soundEnabledCheckbox: document.getElementById('sound-enabled'),
+      // Difficulty
+      difficultySelect: document.getElementById('difficulty'),
+      multiplicationRuleSelect: document.getElementById('multiplication-rule'),
       cancelSettingsBtn: document.getElementById('cancel-settings'),
       startTestBtn: document.getElementById('start-test'),
       
       // Quick stats
       totalQuestionsEl: document.getElementById('total-questions'),
-      bestScoreEl: document.getElementById('best-score'),
+      averageScoreEl: document.getElementById('average-score'),
       totalTimeEl: document.getElementById('total-time'),
       
       // Theme and language controls
@@ -106,7 +109,7 @@ export class MainController {
       timerMode: 'per-question',
       timerDuration: 30,
       soundEnabled: true,
-      difficulty: 'normal'
+      difficulty: 'medium'
     };
 
     return Storage.load('appSettings', defaultSettings);
@@ -173,6 +176,12 @@ export class MainController {
     this.elements.timerModeSelect.value = this.settings.timerMode;
     this.elements.timerDurationInput.value = this.settings.timerDuration;
     this.elements.soundEnabledCheckbox.checked = this.settings.soundEnabled;
+    if (this.elements.difficultySelect) {
+      this.elements.difficultySelect.value = this.settings.difficulty;
+    }
+    if (this.elements.multiplicationRuleSelect) {
+      this.elements.multiplicationRuleSelect.value = this.settings.multiplicationRule || 'random';
+    }
 
     this.toggleTimerDurationGroup(this.settings.timerMode);
   }
@@ -197,7 +206,8 @@ export class MainController {
       timerMode: formData.get('timerMode'),
       timerDuration: parseInt(formData.get('timerDuration')),
       soundEnabled: formData.has('soundEnabled'),
-      difficulty: 'normal'
+      difficulty: (formData.get('difficulty') || 'medium').toLowerCase(),
+      multiplicationRule: (formData.get('multiplicationRule') || 'random')
     };
 
     // Validate settings
@@ -341,18 +351,18 @@ export class MainController {
     const allSessions = [...trainingSessions, ...examSessions];
     
     const totalQuestions = allSessions.reduce((sum, session) => sum + session.totalQuestions, 0);
-    const bestScore = allSessions.length > 0 ? Math.max(...allSessions.map(s => s.score)) : 0;
+    const averageScore = allSessions.length > 0 ? Math.round(allSessions.reduce((sum, s) => sum + (s.score || 0), 0) / allSessions.length) : 0;
     const totalTime = allSessions.reduce((sum, session) => sum + session.totalTime, 0);
     
     const stats = {
       totalQuestions: 0,
-      bestScore: 0,
+      averageScore: 0,
       totalTime: 0
     };
     
     // Update with calculated values
     stats.totalQuestions = totalQuestions;
-    stats.bestScore = bestScore;
+    stats.averageScore = averageScore;
     stats.totalTime = totalTime;
     
     // Save updated stats
@@ -362,8 +372,8 @@ export class MainController {
       this.elements.totalQuestionsEl.textContent = stats.totalQuestions;
     }
 
-    if (this.elements.bestScoreEl) {
-      this.elements.bestScoreEl.textContent = `${stats.bestScore}%`;
+    if (this.elements.averageScoreEl) {
+      this.elements.averageScoreEl.textContent = `${stats.averageScore}%`;
     }
 
     if (this.elements.totalTimeEl) {

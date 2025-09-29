@@ -22,7 +22,11 @@ export class QuestionGenerator {
       factorARange = [0, 10],
       factorBRange = [0, 99],
       avoidDuplicates = true,
-      difficulty = 'normal'
+      difficulty = 'normal',
+      // Optional: choose a specific rule (1, 2, or 4); if omitted, a random rule will be used
+      ruleType = null,
+      // Optional: enable new multiplication rules (defaults to true). If false, fallback to range-based
+      useMultiplicationRules = true
     } = options;
 
     let question;
@@ -30,7 +34,7 @@ export class QuestionGenerator {
     const maxAttempts = 50;
 
     do {
-      question = this.createQuestion(factorARange, factorBRange, difficulty);
+      question = this.createQuestion({ factorARange, factorBRange, difficulty, ruleType, useMultiplicationRules });
       attempts++;
     } while (avoidDuplicates && this.isDuplicate(question) && attempts < maxAttempts);
 
@@ -45,9 +49,18 @@ export class QuestionGenerator {
    * @param {string} difficulty - Difficulty level
    * @returns {Object} Question object
    */
-  createQuestion(factorARange, factorBRange, difficulty) {
-    const factorA = randomInt(factorARange[0], factorARange[1]);
-    const factorB = randomInt(factorBRange[0], factorBRange[1]);
+  createQuestion({ factorARange, factorBRange, difficulty, ruleType, useMultiplicationRules }) {
+    let factorA;
+    let factorB;
+
+    if (useMultiplicationRules) {
+      const [a, b] = this.generateFactorsByRules(ruleType, difficulty);
+      factorA = a;
+      factorB = b;
+    } else {
+      factorA = randomInt(factorARange[0], factorARange[1]);
+      factorB = randomInt(factorBRange[0], factorBRange[1]);
+    }
     const correctAnswer = factorA * factorB;
 
     const question = {
@@ -62,6 +75,93 @@ export class QuestionGenerator {
     };
 
     return question;
+  }
+
+  /**
+   * Generate factors using the specified rule or a random rule
+   * Rules:
+   * 1) n (10..100) × 11
+   * 2) a,b (10..100) where at least one has digit 1 in tens or ones place
+   * 4) a,b random in 10..100
+   * @param {number|null} ruleType - 1, 2, or 4; null for random
+   * @returns {[number, number]} factors [a, b]
+   */
+  generateFactorsByRules(ruleType = null, difficulty = 'medium') {
+    const range = this.getRangeForDifficulty(difficulty);
+    const validRules = [1, 2, 4];
+    const rule = validRules.includes(ruleType) ? ruleType : validRules[randomInt(0, validRules.length - 1)];
+    switch (rule) {
+      case 1:
+        return this.generateRule1(range);
+      case 2:
+        return this.generateRule2(range);
+      case 4:
+      default:
+        return this.generateRule4(range);
+    }
+  }
+
+  /** Rule 1: Single number multiplied by 11 (range × 11) */
+  generateRule1(range) {
+    const a = randomInt(range.min, range.max);
+    const b = 11;
+    return [a, b];
+  }
+
+  /**
+   * Rule 2: Two numbers (10..100) where at least one has digit 1 in tens or ones place
+   */
+  generateRule2(range) {
+    const hasDigit1InTensOrOnes = (n) => {
+      const abs = Math.abs(n);
+      const ones = abs % 10;
+      const tens = Math.floor(abs / 10) % 10;
+      return ones === 1 || tens === 1;
+    };
+
+    let a = randomInt(range.min, range.max);
+    let b = randomInt(range.min, range.max);
+    let guard = 0;
+    while (!hasDigit1InTensOrOnes(a) && !hasDigit1InTensOrOnes(b) && guard < 1000) {
+      // Force one of them to satisfy the condition
+      if (Math.random() < 0.5) {
+        a = this.randomNumberWithDigit1InTensOrOnes(range);
+      } else {
+        b = this.randomNumberWithDigit1InTensOrOnes(range);
+      }
+      guard++;
+    }
+    return [a, b];
+  }
+
+  /** Helper: random number in range with 1 in tens or ones place */
+  randomNumberWithDigit1InTensOrOnes(range) {
+    // Build list of candidates within range where ones==1 or tens==1
+    const candidates = [];
+    for (let n = range.min; n <= range.max; n++) {
+      const ones = n % 10;
+      const tens = Math.floor(n / 10) % 10;
+      if (ones === 1 || tens === 1) candidates.push(n);
+    }
+    return candidates[randomInt(0, candidates.length - 1)];
+  }
+
+  /** Rule 4: Two completely random numbers within difficulty range */
+  generateRule4(range) {
+    const a = randomInt(range.min, range.max);
+    const b = randomInt(range.min, range.max);
+    return [a, b];
+  }
+
+  /** Map difficulty to factor ranges */
+  getRangeForDifficulty(difficulty) {
+    const map = {
+      easy: { min: 10, max: 20 },
+      medium: { min: 10, max: 50 },
+      hard: { min: 10, max: 100 }
+    };
+    const key = (difficulty || 'medium').toLowerCase();
+    return map[key] || map.medium;
   }
 
   /**

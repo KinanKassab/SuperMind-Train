@@ -149,7 +149,8 @@ export class TrainingController {
       timerMode: 'off',
       timerDuration: 4,
       soundEnabled: true,
-      difficulty: 'normal'
+      difficulty: 'medium',
+      multiplicationRule: 'random'
     };
 
     const savedSettings = Storage.load('trainingSettings', defaultSettings);
@@ -162,7 +163,9 @@ export class TrainingController {
   startTraining() {
     this.questions = questionGenerator.generateQuestions(this.settings.questionCount, {
       difficulty: this.settings.difficulty,
-      avoidDuplicates: true
+      avoidDuplicates: true,
+      ruleType: this.settings.multiplicationRule === 'random' ? null : parseInt(this.settings.multiplicationRule),
+      useMultiplicationRules: true
     });
 
     this.currentIndex = 0;

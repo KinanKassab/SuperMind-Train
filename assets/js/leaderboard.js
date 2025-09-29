@@ -1,6 +1,6 @@
 // SuperMind Trainer - Leaderboard
 
-import { Storage, formatTime, formatDate, exportToCSV, exportToJSON, showNotification } from './utils.js';
+import { Storage, formatTime, formatDate, exportToCSV, showNotification } from './utils.js';
 
 /**
  * Leaderboard Controller
@@ -33,7 +33,7 @@ export class LeaderboardController {
       // Statistics
       totalTestsEl: document.getElementById('total-tests'),
       averageScoreEl: document.getElementById('average-score'),
-      bestScoreEl: document.getElementById('best-score'),
+      averageScoreEl: document.getElementById('average-score'),
       totalTimeEl: document.getElementById('total-time'),
       
       // Leaderboard list
@@ -84,7 +84,9 @@ export class LeaderboardController {
     // Action buttons
     this.elements.clearScoresBtnEl?.addEventListener('click', () => this.showClearConfirmation());
     this.elements.exportLeaderboardCsvBtnEl?.addEventListener('click', () => this.exportLeaderboard('csv'));
-    this.elements.exportLeaderboardJsonBtnEl?.addEventListener('click', () => this.exportLeaderboard('json'));
+    if (this.elements.exportLeaderboardJsonBtnEl) {
+      this.elements.exportLeaderboardJsonBtnEl.style.display = 'none';
+    }
     this.elements.startFirstTestBtnEl?.addEventListener('click', () => {
       window.location.href = '../../index.html';
     });
@@ -302,12 +304,10 @@ export class LeaderboardController {
     const totalTests = this.leaderboard.length;
     const averageScore = totalTests > 0 ? 
       Math.round(this.leaderboard.reduce((sum, score) => sum + score.score, 0) / totalTests) : 0;
-    const bestScore = totalTests > 0 ? Math.max(...this.leaderboard.map(score => score.score)) : 0;
     const totalTime = this.leaderboard.reduce((sum, score) => sum + score.totalTime, 0);
 
     this.elements.totalTestsEl.textContent = totalTests;
     this.elements.averageScoreEl.textContent = `${averageScore}%`;
-    this.elements.bestScoreEl.textContent = `${bestScore}%`;
     this.elements.totalTimeEl.textContent = formatTime(totalTime);
   }
 
@@ -502,32 +502,25 @@ export class LeaderboardController {
     const timestamp = new Date().toISOString().split('T')[0];
     let success = false;
 
-    if (format === 'json') {
-      const jsonData = this.prepareLeaderboardJSON();
-      const filename = `leaderboard_${timestamp}`;
-      success = exportToJSON(jsonData, filename);
-    } else {
-      const csvData = this.prepareLeaderboardCSV();
-      const filename = `leaderboard_${timestamp}.csv`;
-      
-      success = exportToCSV(csvData, filename, [
-        'Rank',
-        'Player Name',
-        'Type',
-        'Score (%)',
-        'Correct Answers',
-        'Wrong Answers',
-        'Total Questions',
-        'Total Time In Minutes (seconds)',
-        'Difficulty',
-        'Date',
-        'Comment'
-      ]);
-    }
+    const csvData = this.prepareLeaderboardCSV();
+    const filename = `leaderboard_${timestamp}.csv`;
+    
+    success = exportToCSV(csvData, filename, [
+      'Rank',
+      'Player Name',
+      'Type',
+      'Score (%)',
+      'Correct Answers',
+      'Wrong Answers',
+      'Total Questions',
+      'Total Time In Minutes (seconds)',
+      'Difficulty',
+      'Date',
+      'Comment'
+    ]);
 
     if (success) {
-      const formatText = format === 'json' ? 'JSON' : 'CSV';
-      showNotification(`تم تصدير لوحة النتائج بصيغة ${formatText} بنجاح`, 'success', 3000);
+      showNotification('تم تصدير لوحة النتائج بصيغة CSV بنجاح', 'success', 3000);
     } else {
       showNotification('فشل في تصدير لوحة النتائج', 'error', 3000);
     }
@@ -555,32 +548,7 @@ export class LeaderboardController {
   /**
    * Prepare leaderboard JSON data
    */
-  prepareLeaderboardJSON() {
-    return {
-      exportDate: new Date().toISOString(),
-      totalScores: this.filteredLeaderboard.length,
-      leaderboard: this.filteredLeaderboard.map((score, index) => ({
-        rank: index + 1,
-        playerName: score.playerName,
-        type: score.type,
-        score: score.score,
-        correctAnswers: score.correctCount,
-        wrongAnswers: score.wrongCount,
-        totalQuestions: score.totalQuestions,
-        totalTime: score.totalTime,
-        difficulty: score.difficulty,
-        date: formatDate(score.timestamp),
-        comment: score.comment || '',
-        timestamp: score.timestamp
-      })),
-      statistics: {
-        totalTests: this.leaderboard.length,
-        averageScore: this.calculateAverageScore(),
-        bestScore: this.calculateBestScore(),
-        totalTime: this.calculateTotalTime()
-      }
-    };
-  }
+  // JSON export removed
 
   /**
    * Get previous best score

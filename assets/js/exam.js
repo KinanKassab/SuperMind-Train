@@ -147,7 +147,8 @@ export class ExamController {
       timerMode: 'total-time',
       timerDuration: 300, // 5 minutes
       soundEnabled: true,
-      difficulty: 'normal',
+      difficulty: 'medium',
+      multiplicationRule: 'random',
       allowSkip: true
     };
 
@@ -161,7 +162,9 @@ export class ExamController {
   startExam() {
     this.questions = questionGenerator.generateQuestions(this.settings.questionCount, {
       difficulty: this.settings.difficulty,
-      avoidDuplicates: true
+      avoidDuplicates: true,
+      ruleType: this.settings.multiplicationRule === 'random' ? null : parseInt(this.settings.multiplicationRule),
+      useMultiplicationRules: true
     });
 
     this.currentIndex = 0;

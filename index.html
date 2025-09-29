@@ -103,8 +103,8 @@
                     <div class="stat-label" data-ar="إجمالي الأسئلة" data-en="Total Questions">إجمالي الأسئلة</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="best-score">0%</div>
-                    <div class="stat-label" data-ar="أفضل نتيجة" data-en="Best Score">أفضل نتيجة</div>
+                    <div class="stat-number" id="average-score">0%</div>
+                    <div class="stat-label" data-ar="متوسط النتيجة (%)" data-en="Average Score (%)">متوسط النتيجة (%)</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="total-time">0</div>
@@ -129,6 +129,25 @@
                         <label for="question-count" data-ar="عدد الأسئلة" data-en="Number of Questions">عدد الأسئلة</label>
                         <input type="number" id="question-count" name="questionCount" min="1" max="100" value="10" 
                                data-placeholder-ar="أدخل عدد الأسئلة" data-placeholder-en="Enter number of questions">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="difficulty" data-ar="مستوى الصعوبة" data-en="Difficulty">مستوى الصعوبة</label>
+                        <select id="difficulty" name="difficulty">
+                            <option value="easy" data-ar="سهل" data-en="Easy">سهل</option>
+                            <option value="medium" data-ar="متوسط" data-en="Medium" selected>متوسط</option>
+                            <option value="hard" data-ar="صعب" data-en="Hard">صعب</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="multiplication-rule" data-ar="نمط المسائل" data-en="Multiplication Pattern">نمط المسائل</label>
+                        <select id="multiplication-rule" name="multiplicationRule">
+                            <option value="random" data-ar="عشوائي" data-en="Random" selected>عشوائي</option>
+                            <option value="1" data-ar="عدد × 11" data-en="Number × 11">عدد × 11</option>
+                            <option value="2" data-ar="يحتوي على الرقم 1" data-en="Contains digit 1">يحتوي على الرقم 1</option>
+                            <option value="4" data-ar="عشوائي ضمن النطاق" data-en="Fully random in range">عشوائي ضمن النطاق</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -167,8 +186,8 @@
 
     <footer class="footer">
         <div class="container">
-            <p data-ar="© 2024 تدريب سوبرمايد - تطوير تعليمي تفاعلي" data-en="© 2024 SuperMind Trainer - Interactive Educational Development">
-                © 2024 تدريب سوبرمايد - تطوير تعليمي تفاعلي
+            <p data-ar="©2025 تدريب سوبرمايد - تطوير كنان قصاب" data-en="© 2024 SuperMind Trainer - Interactive Educational Development">
+                ©2025 تدريب سوبرمايد - تطوير كنان قصاب
             </p>
         </div>
     </footer>
