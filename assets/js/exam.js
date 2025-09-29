@@ -54,11 +54,6 @@ export class ExamController {
       examTotalQuestionsEl: document.getElementById('exam-total-questions'),
       examTimeTakenEl: document.getElementById('exam-time-taken'),
       viewExamResultsBtnEl: document.getElementById('view-exam-results'),
-      
-      // Time warning modal
-      timeWarningModalEl: document.getElementById('time-warning-modal'),
-      timeWarningTextEl: document.getElementById('time-warning-text'),
-      acknowledgeWarningBtnEl: document.getElementById('acknowledge-warning')
     };
   }
 
@@ -97,18 +92,12 @@ export class ExamController {
     // Completion modal buttons
     this.elements.viewExamResultsBtnEl?.addEventListener('click', () => this.viewResults());
 
-    // Time warning modal
-    this.elements.acknowledgeWarningBtnEl?.addEventListener('click', () => {
-      this.elements.timeWarningModalEl.classList.remove('show');
-      this.elements.timeWarningModalEl.setAttribute('aria-hidden', 'true');
-    });
-
     // Back button
     const backBtn = document.getElementById('back-btn');
     if (backBtn) {
       backBtn.addEventListener('click', () => {
-        if (confirm('هل أنت متأكد من العودة؟ سيتم فقدان التقدم الحالي.')) {
-          window.location.href = 'index.html';
+        if (true) {
+          window.location.href = '../../index.html';
         }
       });
     }
@@ -338,17 +327,6 @@ export class ExamController {
         this.settings.timerDuration,
         (remaining) => {
           this.elements.timeRemainingEl.textContent = formatTime(remaining);
-          
-          // Show warning when 30 seconds remain
-          if (remaining === 30 && !this.warningShown) {
-            this.showTimeWarning(30);
-            this.warningShown = true;
-          }
-          
-          // Show warning when 10 seconds remain
-          if (remaining === 10) {
-            this.showTimeWarning(10);
-          }
         },
         () => {
           // Time's up - auto submit exam
@@ -420,20 +398,6 @@ export class ExamController {
     
     this.completeExam();
   }
-
-  /**
-   * Show time warning
-   */
-  showTimeWarning(seconds) {
-    this.elements.timeWarningTextEl.textContent = `الوقت المتبقي: ${seconds} ثانية`;
-    this.elements.timeWarningModalEl.classList.add('show');
-    this.elements.timeWarningModalEl.setAttribute('aria-hidden', 'false');
-    
-    if (this.settings.soundEnabled) {
-      playSound('wrong');
-    }
-  }
-
   /**
    * Complete exam session
    */
@@ -543,9 +507,9 @@ export class ExamController {
     });
 
     Storage.save('quickStats', {
-      totalQuestions: currentStats.totalQuestions + totalQuestions,
+      totalQuestions: totalQuestions, // إزالة الجمع مع currentStats
       bestScore: Math.max(currentStats.bestScore, bestScore),
-      totalTime: currentStats.totalTime + totalTime
+      totalTime: totalTime // إزالة الجمع مع currentStats
     });
   }
 

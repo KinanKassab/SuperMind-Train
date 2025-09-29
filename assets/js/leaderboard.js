@@ -1,6 +1,6 @@
 // SuperMind Trainer - Leaderboard
 
-import { Storage, formatTime, formatDate, exportToCSV, showNotification } from './utils.js';
+import { Storage, formatTime, formatDate, exportToCSV, exportToJSON, showNotification } from './utils.js';
 
 /**
  * Leaderboard Controller
@@ -45,7 +45,8 @@ export class LeaderboardController {
       
       // Action buttons
       clearScoresBtnEl: document.getElementById('clear-scores'),
-      exportLeaderboardBtnEl: document.getElementById('export-leaderboard'),
+      exportLeaderboardCsvBtnEl: document.getElementById('export-leaderboard-csv'),
+      exportLeaderboardJsonBtnEl: document.getElementById('export-leaderboard-json'),
       startFirstTestBtnEl: document.getElementById('start-first-test'),
       
       // Modals
@@ -82,9 +83,10 @@ export class LeaderboardController {
 
     // Action buttons
     this.elements.clearScoresBtnEl?.addEventListener('click', () => this.showClearConfirmation());
-    this.elements.exportLeaderboardBtnEl?.addEventListener('click', () => this.exportLeaderboard());
+    this.elements.exportLeaderboardCsvBtnEl?.addEventListener('click', () => this.exportLeaderboard('csv'));
+    this.elements.exportLeaderboardJsonBtnEl?.addEventListener('click', () => this.exportLeaderboard('json'));
     this.elements.startFirstTestBtnEl?.addEventListener('click', () => {
-      window.location.href = 'index.html';
+      window.location.href = '../../index.html';
     });
 
     // Score details modal
@@ -110,7 +112,7 @@ export class LeaderboardController {
     const backBtn = document.getElementById('back-btn');
     if (backBtn) {
       backBtn.addEventListener('click', () => {
-        window.location.href = 'index.html';
+        window.location.href = '../../index.html';
       });
     }
 
@@ -446,33 +448,43 @@ export class LeaderboardController {
   }
 
   /**
-   * Export leaderboard to CSV
+   * Export leaderboard to CSV or JSON
    */
-  exportLeaderboard() {
+  exportLeaderboard(format = 'csv') {
     if (this.filteredLeaderboard.length === 0) {
       showNotification('لا توجد نتائج للتصدير', 'error', 3000);
       return;
     }
 
-    const csvData = this.prepareLeaderboardCSV();
-    const filename = `leaderboard_${new Date().toISOString().split('T')[0]}.csv`;
-    
-    const success = exportToCSV(csvData, filename, [
-      'Rank',
-      'Player Name',
-      'Type',
-      'Score (%)',
-      'Correct Answers',
-      'Wrong Answers',
-      'Total Questions',
-      'Total Time (seconds)',
-      'Difficulty',
-      'Date',
-      'Comment'
-    ]);
+    const timestamp = new Date().toISOString().split('T')[0];
+    let success = false;
+
+    if (format === 'json') {
+      const jsonData = this.prepareLeaderboardJSON();
+      const filename = `leaderboard_${timestamp}`;
+      success = exportToJSON(jsonData, filename);
+    } else {
+      const csvData = this.prepareLeaderboardCSV();
+      const filename = `leaderboard_${timestamp}.csv`;
+      
+      success = exportToCSV(csvData, filename, [
+        'Rank',
+        'Player Name',
+        'Type',
+        'Score (%)',
+        'Correct Answers',
+        'Wrong Answers',
+        'Total Questions',
+        'Total Time In Minutes (seconds)',
+        'Difficulty',
+        'Date',
+        'Comment'
+      ]);
+    }
 
     if (success) {
-      showNotification('تم تصدير لوحة النتائج بنجاح', 'success', 3000);
+      const formatText = format === 'json' ? 'JSON' : 'CSV';
+      showNotification(`تم تصدير لوحة النتائج بصيغة ${formatText} بنجاح`, 'success', 3000);
     } else {
       showNotification('فشل في تصدير لوحة النتائج', 'error', 3000);
     }
@@ -495,6 +507,36 @@ export class LeaderboardController {
       formatDate(score.timestamp),
       score.comment || ''
     ]);
+  }
+
+  /**
+   * Prepare leaderboard JSON data
+   */
+  prepareLeaderboardJSON() {
+    return {
+      exportDate: new Date().toISOString(),
+      totalScores: this.filteredLeaderboard.length,
+      leaderboard: this.filteredLeaderboard.map((score, index) => ({
+        rank: index + 1,
+        playerName: score.playerName,
+        type: score.type,
+        score: score.score,
+        correctAnswers: score.correctAnswers,
+        wrongAnswers: score.wrongAnswers,
+        totalQuestions: score.totalQuestions,
+        totalTime: score.totalTime,
+        difficulty: score.difficulty,
+        date: score.date,
+        comment: score.comment || '',
+        questions: score.questions || []
+      })),
+      statistics: {
+        totalTests: this.leaderboard.length,
+        averageScore: this.calculateAverageScore(),
+        bestScore: this.calculateBestScore(),
+        totalTime: this.calculateTotalTime()
+      }
+    };
   }
 
   /**

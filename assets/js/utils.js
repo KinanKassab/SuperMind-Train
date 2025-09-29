@@ -353,6 +353,35 @@ export function exportToCSV(data, filename, headers = []) {
 }
 
 /**
+ * Export data to JSON file
+ * @param {Array|Object} data - Data to export
+ * @param {string} filename - Name of the file (without extension)
+ * @returns {boolean} True if successful
+ */
+export function exportToJSON(data, filename) {
+  try {
+    const jsonContent = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+    
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${filename}.json`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+    return true;
+  } catch (error) {
+    console.error('Error exporting JSON:', error);
+    return false;
+  }
+}
+
+/**
  * Get current date and time in ISO format
  * @returns {string} ISO date string
  */

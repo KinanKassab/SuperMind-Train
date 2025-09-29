@@ -143,14 +143,16 @@ npm test scoring.test.js
 ```
 SuperMind-Trainer/
 ├── index.html              # الصفحة الرئيسية
-├── training.html           # صفحة التدريب
-├── exam.html               # صفحة الاختبار
-├── results.html            # صفحة النتائج
-├── leaderboard.html        # صفحة لوحة النتائج
 ├── manifest.json           # PWA manifest
 ├── README.md               # هذا الملف
 │
 ├── assets/
+│   ├── html/
+│   │   ├── training.html           # صفحة التدريب
+│   │   ├── exam.html               # صفحة الاختبار
+│   │   ├── results.html            # صفحة النتائج
+│   │   └── leaderboard.html        # صفحة لوحة النتائج
+│   │
 │   ├── css/
 │   │   ├── main.css        # التنسيقات الرئيسية
 │   │   └── themes.css      # ثيمات الألوان

@@ -29,7 +29,6 @@ export class MainController {
       timerDurationGroup: document.getElementById('timer-duration-group'),
       timerDurationInput: document.getElementById('timer-duration'),
       soundEnabledCheckbox: document.getElementById('sound-enabled'),
-      showHintsCheckbox: document.getElementById('show-hints'),
       cancelSettingsBtn: document.getElementById('cancel-settings'),
       startTestBtn: document.getElementById('start-test'),
       
@@ -104,10 +103,9 @@ export class MainController {
   loadSettings() {
     const defaultSettings = {
       questionCount: 10,
-      timerMode: 'off',
+      timerMode: 'per-question',
       timerDuration: 30,
       soundEnabled: true,
-      showHints: false,
       difficulty: 'normal'
     };
 
@@ -137,6 +135,19 @@ export class MainController {
   showSettingsModal(testType) {
     this.currentTestType = testType;
     this.populateSettingsForm();
+    
+    // Hide timer options for training mode
+    const timerGroup = document.querySelector('.form-group:has(#timer-mode)');
+    const timerDurationGroup = this.elements.timerDurationGroup;
+    
+    if (testType === 'training') {
+      if (timerGroup) timerGroup.style.display = 'none';
+      if (timerDurationGroup) timerDurationGroup.style.display = 'none';
+    } else {
+      if (timerGroup) timerGroup.style.display = 'block';
+      this.toggleTimerDurationGroup(this.settings.timerMode);
+    }
+    
     this.elements.settingsModal.classList.add('show');
     this.elements.settingsModal.setAttribute('aria-hidden', 'false');
     
@@ -162,7 +173,6 @@ export class MainController {
     this.elements.timerModeSelect.value = this.settings.timerMode;
     this.elements.timerDurationInput.value = this.settings.timerDuration;
     this.elements.soundEnabledCheckbox.checked = this.settings.soundEnabled;
-    this.elements.showHintsCheckbox.checked = this.settings.showHints;
 
     this.toggleTimerDurationGroup(this.settings.timerMode);
   }
@@ -172,8 +182,7 @@ export class MainController {
    */
   toggleTimerDurationGroup(timerMode) {
     if (this.elements.timerDurationGroup) {
-      this.elements.timerDurationGroup.style.display = 
-        (timerMode === 'per-question' || timerMode === 'total-time') ? 'block' : 'none';
+      this.elements.timerDurationGroup.style.display = 'block';
     }
   }
 
@@ -188,7 +197,6 @@ export class MainController {
       timerMode: formData.get('timerMode'),
       timerDuration: parseInt(formData.get('timerDuration')),
       soundEnabled: formData.has('soundEnabled'),
-      showHints: formData.has('showHints'),
       difficulty: 'normal'
     };
 
@@ -213,7 +221,7 @@ export class MainController {
 
     // Navigate to appropriate page
     const page = this.currentTestType === 'training' ? 'training.html' : 'exam.html';
-    window.location.href = page;
+    window.location.href = page.startsWith('assets/html/') ? page : `assets/html/${page}`;
   }
 
   /**
@@ -354,9 +362,9 @@ export class MainController {
     const minutes = Math.floor((seconds % 3600) / 60);
     
     if (hours > 0) {
-      return `${hours}س ${minutes}د`;
+      return `${hours}: ${minutes}`;
     } else {
-      return `${minutes}د`;
+      return `${minutes}`;
     }
   }
 }

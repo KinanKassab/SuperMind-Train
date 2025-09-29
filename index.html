@@ -21,7 +21,9 @@
         <div class="container">
             <!-- Logo Section - Left side with semantic structure -->
             <a href="index.html" class="logo" aria-label="العودة إلى الصفحة الرئيسية">
-                <span class="logo-icon" aria-hidden="true">🧠</span>
+                <span class="logo-icon" aria-hidden="true">
+                    <img src="favicon.ico" alt="SuperMind Trainer" style="width: 24px; height: 24px;">
+                </span>
                 <span class="logo-text" data-ar="تدريب سوبرمايد">تدريب سوبرمايد</span>
             </a>
             
@@ -72,6 +74,17 @@
                     </button>
                 </div>
 
+                <div class="mode-card" data-mode="leaderboard">
+                    <div class="mode-icon">🏆</div>
+                    <h3 class="mode-title" data-ar="لوحة النتائج" data-en="Leaderboard">لوحة النتائج</h3>
+                    <p class="mode-description" data-ar="شاهد أفضل النتائج المحفوظة" data-en="View your best saved scores">
+                        شاهد أفضل النتائج المحفوظة
+                    </p>
+                    <button class="btn btn-secondary mode-btn" data-mode="leaderboard">
+                    <span data-ar="عرض النتائج" data-en="View Results">عرض النتائج</span>
+                    </button>
+                </div>
+                
                 <div class="mode-card" data-mode="exam">
                     <div class="mode-icon">📝</div>
                     <h3 class="mode-title" data-ar="وضع الاختبار" data-en="Exam Mode">وضع الاختبار</h3>
@@ -80,17 +93,6 @@
                     </p>
                     <button class="btn btn-primary mode-btn" data-mode="exam">
                         <span data-ar="ابدأ الاختبار" data-en="Start Exam">ابدأ الاختبار</span>
-                    </button>
-                </div>
-
-                <div class="mode-card" data-mode="leaderboard">
-                    <div class="mode-icon">🏆</div>
-                    <h3 class="mode-title" data-ar="لوحة النتائج" data-en="Leaderboard">لوحة النتائج</h3>
-                    <p class="mode-description" data-ar="شاهد أفضل النتائج المحفوظة" data-en="View your best saved scores">
-                        شاهد أفضل النتائج المحفوظة
-                    </p>
-                    <button class="btn btn-secondary mode-btn" data-mode="leaderboard">
-                        <span data-ar="عرض النتائج" data-en="View Results">عرض النتائج</span>
                     </button>
                 </div>
             </div>
@@ -106,7 +108,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="total-time">0</div>
-                    <div class="stat-label" data-ar="إجمالي الوقت" data-en="Total Time">إجمالي الوقت</div>
+                    <div class="stat-label" data-ar="إجمالي الوقت بالدقايق" data-en="Total Time In Minutes">إجمالي الوقت بالدقايق</div>
                 </div>
             </div>
         </div>
@@ -125,21 +127,14 @@
                 <form id="settings-form">
                     <div class="form-group">
                         <label for="question-count" data-ar="عدد الأسئلة" data-en="Number of Questions">عدد الأسئلة</label>
-                        <select id="question-count" name="questionCount">
-                            <option value="5">5</option>
-                            <option value="10" selected>10</option>
-                            <option value="15">15</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
-                        </select>
+                        <input type="number" id="question-count" name="questionCount" min="1" max="100" value="10">
                     </div>
 
                     <div class="form-group">
                         <label for="timer-mode" data-ar="وضع المؤقت" data-en="Timer Mode">وضع المؤقت</label>
                         <select id="timer-mode" name="timerMode">
-                            <option value="off" data-ar="بدون مؤقت" data-en="No Timer">بدون مؤقت</option>
                             <option value="per-question" data-ar="مؤقت لكل سؤال" data-en="Per Question">مؤقت لكل سؤال</option>
-                            <option value="total-time" data-ar="مؤقت إجمالي" data-en="Total Time">مؤقت إجمالي</option>
+                            <option value="total-time" data-ar="مؤقت إجمالي" data-en="Total Time In Minutes">مؤقت إجمالي</option>
                         </select>
                     </div>
 
@@ -150,19 +145,11 @@
 
                     <div class="form-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="sound-enabled" name="soundEnabled" checked>
-                            <span class="checkmark"></span>
                             <span data-ar="تفعيل الأصوات" data-en="Enable Sounds">تفعيل الأصوات</span>
+                            <input type="checkbox" id="sound-enabled" name="soundEnabled" checked>
                         </label>
                     </div>
 
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="show-hints" name="showHints">
-                            <span class="checkmark"></span>
-                            <span data-ar="إظهار تلميحات" data-en="Show Hints">إظهار تلميحات</span>
-                        </label>
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">

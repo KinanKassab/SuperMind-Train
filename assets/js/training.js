@@ -53,7 +53,6 @@ export class TrainingController {
       feedbackExplanationEl: document.getElementById('feedback-explanation'),
       
       // Action buttons
-      hintBtnEl: document.getElementById('hint-btn'),
       nextBtnEl: document.getElementById('next-btn'),
       
       // Stats elements
@@ -101,7 +100,6 @@ export class TrainingController {
     });
 
     // Action buttons
-    this.elements.hintBtnEl?.addEventListener('click', () => this.showHint());
     this.elements.nextBtnEl?.addEventListener('click', () => this.nextQuestion());
     
     // Completion modal buttons
@@ -113,7 +111,7 @@ export class TrainingController {
     if (backBtn) {
       backBtn.addEventListener('click', () => {
         if (confirm('هل أنت متأكد من العودة؟ سيتم فقدان التقدم الحالي.')) {
-          window.location.href = 'index.html';
+          window.location.href = '../../index.html';
         }
       });
     }
@@ -140,7 +138,6 @@ export class TrainingController {
       timerMode: 'off',
       timerDuration: 30,
       soundEnabled: true,
-      showHints: false,
       difficulty: 'normal'
     };
 
@@ -193,7 +190,6 @@ export class TrainingController {
     this.elements.feedbackSectionEl.style.display = 'none';
 
     // Reset button states
-    this.elements.hintBtnEl.style.display = this.settings.showHints ? 'block' : 'none';
     this.elements.nextBtnEl.style.display = 'none';
 
     // Start question timer if enabled
@@ -320,44 +316,6 @@ export class TrainingController {
     this.elements.feedbackSectionEl.style.display = 'block';
   }
 
-  /**
-   * Show hint for current question
-   */
-  showHint() {
-    if (this.isAnswered) return;
-
-    const hint = this.generateHint();
-    showNotification(hint, 'info', 3000);
-  }
-
-  /**
-   * Generate hint for current question
-   */
-  generateHint() {
-    const { factorA, factorB } = this.currentQuestion;
-    
-    if (factorA === 0 || factorB === 0) {
-      return 'أي رقم مضروب في صفر يساوي صفر';
-    }
-    
-    if (factorA === 1) {
-      return 'أي رقم مضروب في واحد يساوي نفس الرقم';
-    }
-    
-    if (factorB === 1) {
-      return 'واحد مضروب في أي رقم يساوي نفس الرقم';
-    }
-    
-    if (factorA === 10) {
-      return 'عشرة مضروبة في أي رقم تضيف صفر في النهاية';
-    }
-    
-    if (factorB === 10) {
-      return 'أي رقم مضروب في عشرة يضيف صفر في النهاية';
-    }
-    
-    return `جرب حساب ${factorA} × ${factorB} خطوة بخطوة`;
-  }
 
   /**
    * Move to next question

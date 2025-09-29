@@ -1691,7 +1691,7 @@ body {
 /* Responsive Design */
 @media (max-width: 640px) {
   .header .container {
-    flex-direction: column;
+    flex-direction: row;
     gap: var(--spacing-sm);
   }
   

@@ -1,6 +1,6 @@
 // SuperMind Trainer - Results Page
 
-import { Storage, formatTime, formatDate, exportToCSV, createConfetti, showNotification } from './utils.js';
+import { Storage, formatTime, formatDate, exportToCSV, exportToJSON, createConfetti, showNotification } from './utils.js';
 
 /**
  * Results Page Controller
@@ -35,6 +35,7 @@ export class ResultsController {
       
       // Action buttons
       exportCsvBtnEl: document.getElementById('export-csv'),
+      exportJsonBtnEl: document.getElementById('export-json'),
       printResultsBtnEl: document.getElementById('print-results'),
       retryTestBtnEl: document.getElementById('retry-test'),
       newTestBtnEl: document.getElementById('new-test'),
@@ -57,7 +58,8 @@ export class ResultsController {
    */
   bindEvents() {
     // Action buttons
-    this.elements.exportCsvBtnEl?.addEventListener('click', () => this.exportResults());
+    this.elements.exportCsvBtnEl?.addEventListener('click', () => this.exportResults('csv'));
+    this.elements.exportJsonBtnEl?.addEventListener('click', () => this.exportResults('json'));
     this.elements.printResultsBtnEl?.addEventListener('click', () => this.printResults());
     this.elements.retryTestBtnEl?.addEventListener('click', () => this.retryTest());
     this.elements.newTestBtnEl?.addEventListener('click', () => this.startNewTest());
@@ -82,7 +84,7 @@ export class ResultsController {
     const backBtn = document.getElementById('back-btn');
     if (backBtn) {
       backBtn.addEventListener('click', () => {
-        window.location.href = 'index.html';
+        window.location.href = '../../index.html';
       });
     }
 
@@ -108,7 +110,7 @@ export class ResultsController {
     if (!this.currentResult) {
       showNotification('لا توجد نتائج لعرضها', 'error', 3000);
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = '../../index.html';
       }, 2000);
       return;
     }
@@ -246,25 +248,35 @@ export class ResultsController {
   /**
    * Export results to CSV
    */
-  exportResults() {
+  exportResults(format = 'csv') {
     if (!this.currentResult) return;
 
-    const csvData = this.prepareCSVData();
-    const filename = `results_${this.currentResult.type}_${new Date().toISOString().split('T')[0]}.csv`;
-    
-    const success = exportToCSV(csvData, filename, [
-      'Question Number',
-      'Factor A',
-      'Factor B',
-      'Correct Answer',
-      'User Answer',
-      'Is Correct',
-      'Response Time (seconds)',
-      'Skipped'
-    ]);
+    const timestamp = new Date().toISOString().split('T')[0];
+    let success = false;
+
+    if (format === 'json') {
+      const jsonData = this.prepareJSONData();
+      const filename = `results_${this.currentResult.type}_${timestamp}`;
+      success = exportToJSON(jsonData, filename);
+    } else {
+      const csvData = this.prepareCSVData();
+      const filename = `results_${this.currentResult.type}_${timestamp}.csv`;
+      
+      success = exportToCSV(csvData, filename, [
+        'Question Number',
+        'Factor A',
+        'Factor B',
+        'Correct Answer',
+        'User Answer',
+        'Is Correct',
+        'Response Time (seconds)',
+        'Skipped'
+      ]);
+    }
 
     if (success) {
-      showNotification('تم تصدير النتائج بنجاح', 'success', 3000);
+      const formatText = format === 'json' ? 'JSON' : 'CSV';
+      showNotification(`تم تصدير النتائج بصيغة ${formatText} بنجاح`, 'success', 3000);
     } else {
       showNotification('فشل في تصدير النتائج', 'error', 3000);
     }
@@ -289,6 +301,40 @@ export class ResultsController {
   }
 
   /**
+   * Prepare JSON data
+   */
+  prepareJSONData() {
+    return {
+      exportDate: new Date().toISOString(),
+      testType: this.currentResult.type,
+      summary: {
+        totalQuestions: this.currentResult.totalQuestions,
+        correctAnswers: this.currentResult.correctAnswers,
+        wrongAnswers: this.currentResult.wrongAnswers,
+        score: this.currentResult.score,
+        totalTime: this.currentResult.totalTime,
+        difficulty: this.currentResult.difficulty || 'Normal',
+        timestamp: this.currentResult.timestamp
+      },
+      questions: this.currentResult.questions.map((question, index) => ({
+        questionNumber: index + 1,
+        factorA: question.factorA,
+        factorB: question.factorB,
+        correctAnswer: question.correctAnswer,
+        userAnswer: question.userAnswer,
+        isCorrect: question.isCorrect,
+        responseTime: question.responseTime,
+        skipped: question.skipped || false
+      })),
+      performance: {
+        averageResponseTime: this.calculateAverageResponseTime(),
+        accuracyRate: this.currentResult.score,
+        improvement: this.calculateImprovement()
+      }
+    };
+  }
+
+  /**
    * Print results
    */
   printResults() {
@@ -300,14 +346,14 @@ export class ResultsController {
    */
   retryTest() {
     const testType = this.currentResult.type;
-    window.location.href = testType === 'training' ? 'training.html' : 'exam.html';
+    window.location.href = testType === 'training' ? 'assets/html/training.html' : 'exam.html';
   }
 
   /**
    * Start new test
    */
   startNewTest() {
-    window.location.href = 'index.html';
+    window.location.href = '../../index.html';
   }
 
   /**
