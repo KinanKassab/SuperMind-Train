@@ -243,13 +243,13 @@ body {
 
 /* Control Button Base Styles */
 .header-controls .btn-icon {
-  /* Gradient background for modern look */
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
-  color: var(--text-inverse);
+  /* Clean outlined style */
+  background-color: var(--bg-card);
+  color: var(--text-primary);
   
   /* Rounded corners */
   border-radius: 12px;
-  border: none;
+  border: 1px solid var(--border-color);
   
   /* Size and spacing */
   width: 40px;
@@ -259,6 +259,7 @@ body {
   /* Interactive states */
   transition: all var(--transition-fast);
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
   
   /* Focus and accessibility */
   position: relative;
@@ -267,13 +268,16 @@ body {
 
 /* Control button hover effect - translate up */
 .header-controls .btn-icon:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  transform: translateY(-1px);
+  background-color: var(--bg-secondary);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
 }
 
 /* Control button active state - scale down */
 .header-controls .btn-icon:active {
   transform: scale(0.98);
+  background-color: var(--bg-tertiary);
 }
 
 /* Focus-visible outline for accessibility */
@@ -285,7 +289,7 @@ body {
 /* Icon styling within control buttons */
 .header-controls .btn-icon .theme-icon {
   font-size: var(--font-size-base);
-  transition: transform var(--transition-fast);
+  transition: transform var(--transition-fast), color var(--transition-fast);
 }
 
 /* Language icon - SVG background styling */
@@ -310,7 +314,7 @@ body {
   transition: transform var(--transition-fast);
   
   /* SVG color filter for theme adaptation */
-  filter: brightness(0) saturate(100%) invert(100%);
+  filter: brightness(0) saturate(100%);
 }
 
 /* Icon animation on hover */
@@ -398,13 +402,13 @@ body {
 
 /* Back Button Styling - Secondary button in header */
 .header-controls .btn-secondary {
-  /* Gradient background for modern look */
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
-  color: var(--text-inverse);
+  /* Match outlined icon style */
+  background-color: var(--bg-card);
+  color: var(--text-primary);
   
   /* Rounded corners */
   border-radius: 12px;
-  border: none;
+  border: 1px solid var(--border-color);
   
   /* Size and spacing */
   width: 40px;
@@ -414,6 +418,7 @@ body {
   /* Interactive states */
   transition: all var(--transition-fast);
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
   
   /* Focus and accessibility */
   position: relative;
@@ -454,13 +459,16 @@ body {
 
 /* Back button hover effect */
 .header-controls .btn-secondary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  transform: translateY(-1px);
+  background-color: var(--bg-secondary);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
 }
 
 /* Back button active state */
 .header-controls .btn-secondary:active {
   transform: scale(0.98);
+  background-color: var(--bg-tertiary);
 }
 
 /* Back button focus state */

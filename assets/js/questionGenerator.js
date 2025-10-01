@@ -89,8 +89,11 @@ export class QuestionGenerator {
   generateFactorsByRules(ruleType = null, difficulty = 'medium') {
     const range = this.getRangeForDifficulty(difficulty);
     const validRules = [1, 2, 4];
-    const rule = validRules.includes(ruleType) ? ruleType : validRules[randomInt(0, validRules.length - 1)];
-    switch (rule) {
+    // For extreme difficulty, force fully random rule 4 to satisfy "fully random with extremely hard" requirement
+    const selectedRule = (difficulty && difficulty.toLowerCase() === 'extreme')
+      ? 4
+      : (validRules.includes(ruleType) ? ruleType : validRules[randomInt(0, validRules.length - 1)]);
+    switch (selectedRule) {
       case 1:
         return this.generateRule1(range);
       case 2:
@@ -158,7 +161,9 @@ export class QuestionGenerator {
     const map = {
       easy: { min: 10, max: 20 },
       medium: { min: 10, max: 50 },
-      hard: { min: 10, max: 100 }
+      hard: { min: 10, max: 100 },
+      // Extreme: keep only two numbers but make each between 50 and 100
+      extreme: { min: 50, max: 99 }
     };
     const key = (difficulty || 'medium').toLowerCase();
     return map[key] || map.medium;
@@ -228,7 +233,9 @@ export class QuestionGenerator {
     const strategies = {
       easy: ['off_by_one', 'swap_digits', 'simple_math'],
       normal: ['off_by_one', 'swap_digits', 'factor_variation', 'simple_math'],
-      hard: ['off_by_one', 'swap_digits', 'factor_variation', 'complex_math', 'random_close']
+      hard: ['off_by_one', 'swap_digits', 'factor_variation', 'complex_math', 'random_close'],
+      // Extreme: emphasize close-but-tricky and factor-based variations
+      extreme: ['swap_digits', 'factor_variation', 'complex_math', 'random_close']
     };
 
     return strategies[difficulty] || strategies.normal;
@@ -368,7 +375,8 @@ export class QuestionGenerator {
     const ranges = {
       easy: Math.max(10, correctAnswer * 0.5),
       normal: Math.max(20, correctAnswer * 0.8),
-      hard: Math.max(50, correctAnswer * 1.5)
+      hard: Math.max(50, correctAnswer * 1.5),
+      extreme: Math.max(99, correctAnswer * 2.0)
     };
     
     const range = ranges[difficulty] || ranges.normal;
@@ -405,7 +413,8 @@ export class QuestionGenerator {
     const limits = {
       easy: 60,
       normal: 45,
-      hard: 30
+      hard: 30,
+      extreme: 25
     };
     
     return limits[difficulty] || limits.normal;
@@ -557,4 +566,5 @@ export function validateQuestion(question) {
 
 export function getQuestionStatistics() {
   return questionGenerator.getStatistics();
+  
 }
