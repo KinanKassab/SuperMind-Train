@@ -46,8 +46,9 @@ export class ExamController {
       answerOptionsEl: document.getElementById('answer-options'),
       
       // Action buttons
-      skipBtnEl: document.getElementById('skip-btn'),
-      submitBtnEl: document.getElementById('submit-btn'),
+      prevBtnEl: document.getElementById('prev-btn'),
+      nextBtnEl: document.getElementById('next-btn'),
+      endExamBtnEl: document.getElementById('end-exam-btn'),
       
       // Completion modal
       examCompletionModalEl: document.getElementById('exam-completion-modal'),
@@ -71,23 +72,25 @@ export class ExamController {
 
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
-      if (this.isAnswered) return;
-      
       if (e.key >= '1' && e.key <= '4') {
         e.preventDefault();
         this.selectAnswer(parseInt(e.key));
-      } else if (e.key === 'Enter') {
+      } else if (e.key === 'ArrowRight' || e.key === 'n' || e.key === 'N') {
         e.preventDefault();
-        this.submitAnswer();
-      } else if (e.key === 'n' || e.key === 'N') {
+        this.goNext();
+      } else if (e.key === 'ArrowLeft' || e.key === 'p' || e.key === 'P') {
         e.preventDefault();
-        this.skipQuestion();
+        this.goPrev();
+      } else if (e.key === 'e' || e.key === 'E') {
+        e.preventDefault();
+        this.requestEndExam();
       }
     });
 
     // Action buttons
-    this.elements.skipBtnEl?.addEventListener('click', () => this.skipQuestion());
-    this.elements.submitBtnEl?.addEventListener('click', () => this.submitAnswer());
+    this.elements.prevBtnEl?.addEventListener('click', () => this.goPrev());
+    this.elements.nextBtnEl?.addEventListener('click', () => this.goNext());
+    this.elements.endExamBtnEl?.addEventListener('click', () => this.requestEndExam());
     
     // Completion modal buttons
     this.elements.viewExamResultsBtnEl?.addEventListener('click', () => this.viewResults());
@@ -169,6 +172,8 @@ export class ExamController {
 
     this.currentIndex = 0;
     this.answers = [];
+    this.tempSelections = [];
+    this.timeSpentByIndex = [];
     this.startTime = Date.now();
     this.isAnswered = false;
     this.isExamComplete = false;
@@ -199,9 +204,11 @@ export class ExamController {
     // Update answer options
     this.updateAnswerOptions();
 
-    // Reset button states
-    this.elements.submitBtnEl.disabled = true;
-    this.elements.skipBtnEl.style.display = this.settings.allowSkip ? 'block' : 'none';
+    // Restore previous selection if exists
+    this.restoreSelection();
+
+    // Update nav buttons state
+    this.updateNavButtonsState();
 
     // Start question timer if enabled
     if (this.settings.timerMode === 'per-question') {
@@ -237,8 +244,6 @@ export class ExamController {
    * Select an answer
    */
   selectAnswer(position) {
-    if (this.isAnswered) return;
-
     // Remove previous selection
     this.elements.answerOptionsEl.querySelectorAll('.answer-btn').forEach(btn => {
       btn.classList.remove('selected');
@@ -248,82 +253,70 @@ export class ExamController {
     const selectedBtn = this.elements.answerOptionsEl.querySelector(`[data-answer="${position}"]`);
     if (selectedBtn) {
       selectedBtn.classList.add('selected');
-      this.elements.submitBtnEl.disabled = false;
+      // Save temporary selection for this index
+      this.tempSelections[this.currentIndex] = position;
     }
   }
 
-  /**
-   * Submit selected answer
-   */
-  submitAnswer() {
-    if (this.isAnswered) return;
-
-    const selectedBtn = this.elements.answerOptionsEl.querySelector('.answer-btn.selected');
-    if (!selectedBtn) return;
-
-    const selectedPosition = parseInt(selectedBtn.dataset.answer);
-    const selectedOption = this.currentQuestion.options.find(opt => opt.position === selectedPosition);
-    
-    if (!selectedOption) return;
-
-    this.isAnswered = true;
-    const responseTime = Date.now() - this.questionStartTime;
-
-    // Stop question timer
-    if (this.questionTimer) {
-      this.questionTimer.stop();
+  // Navigation helpers
+  goPrev() {
+    this.captureTimeSpent();
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+      this.updateProgress();
+      this.showQuestion();
     }
-
-    // Save answer
-    this.answers.push({
-      questionId: this.currentQuestion.id,
-      questionIndex: this.currentIndex,
-      selectedAnswer: selectedOption.value,
-      isCorrect: selectedOption.isCorrect,
-      responseTime,
-      timestamp: Date.now()
-    });
-
-    // Move to next question
-    this.nextQuestion();
   }
 
-  /**
-   * Skip current question
-   */
-  skipQuestion() {
-    if (this.isAnswered || !this.settings.allowSkip) return;
+  goNext() {
+    this.captureTimeSpent();
+    if (this.currentIndex < this.questions.length - 1) {
+      this.currentIndex++;
+      this.updateProgress();
+      this.showQuestion();
+    } else if (this.currentIndex === this.questions.length - 1) {
+      // At last question, prompt to end
+      this.requestEndExam();
+    }
+  }
 
-    this.isAnswered = true;
-    const responseTime = Date.now() - this.questionStartTime;
+  updateNavButtonsState() {
+    if (this.elements.prevBtnEl) {
+      this.elements.prevBtnEl.disabled = this.currentIndex === 0;
+    }
+    if (this.elements.nextBtnEl) {
+      this.elements.nextBtnEl.textContent = (this.currentIndex === this.questions.length - 1)
+        ? (document.documentElement.lang === 'ar' ? 'إنهاء' : 'Finish')
+        : (document.documentElement.lang === 'ar' ? 'التالي' : 'Next');
+    }
+  }
 
-    // Stop question timer
+  restoreSelection() {
+    // Clear any previous state
+    this.elements.answerOptionsEl.querySelectorAll('.answer-btn').forEach(btn => btn.classList.remove('selected'));
+    const position = this.tempSelections[this.currentIndex];
+    if (position) {
+      const btn = this.elements.answerOptionsEl.querySelector(`[data-answer="${position}"]`);
+      if (btn) btn.classList.add('selected');
+    }
+  }
+
+  captureTimeSpent() {
+    if (this.questionStartTime) {
+      const spent = Date.now() - this.questionStartTime;
+      this.timeSpentByIndex[this.currentIndex] = (this.timeSpentByIndex[this.currentIndex] || 0) + spent;
+    }
     if (this.questionTimer) {
       this.questionTimer.stop();
     }
-
-    // Save skipped answer
-    this.answers.push({
-      questionId: this.currentQuestion.id,
-      questionIndex: this.currentIndex,
-      selectedAnswer: null,
-      isCorrect: false,
-      responseTime,
-      skipped: true,
-      timestamp: Date.now()
-    });
-
-    // Move to next question
-    this.nextQuestion();
   }
 
   /**
    * Move to next question
    */
   nextQuestion() {
-    this.currentIndex++;
-    this.updateProgress();
-    this.showQuestion();
+    // Backwards compatibility if called elsewhere
+    this.goNext();
   }
 
   /**
@@ -375,8 +368,8 @@ export class ExamController {
         }
       },
       () => {
-        // Time's up - auto submit current question
-        this.autoSubmitQuestion();
+        // Time's up - move to next
+        this.goNext();
       }
     );
 
@@ -387,35 +380,14 @@ export class ExamController {
    * Auto submit current question
    */
   autoSubmitQuestion() {
-    if (this.isAnswered) return;
-
-    // Select first option if none selected
-    const selectedBtn = this.elements.answerOptionsEl.querySelector('.answer-btn.selected');
-    if (!selectedBtn) {
-      const firstBtn = this.elements.answerOptionsEl.querySelector('.answer-btn');
-      if (firstBtn) {
-        firstBtn.classList.add('selected');
-        this.submitAnswer();
-      }
-    } else {
-      this.submitAnswer();
-    }
+    // No-op in navigation mode
   }
 
   /**
    * Auto submit exam when time runs out
    */
   autoSubmitExam() {
-    // Submit any remaining unanswered questions without double-advancing
-    while (this.currentIndex < this.questions.length) {
-      if (!this.isAnswered) {
-        this.autoSubmitQuestion(); // advances to next question internally
-      } else {
-        this.nextQuestion();
-      }
-    }
-    
-    this.completeExam();
+    this.requestFinalizeAndComplete();
   }
   /**
    * Complete exam session
@@ -432,10 +404,13 @@ export class ExamController {
       this.questionTimer.stop();
     }
 
+    // Build answers from selections if not already built
+    this.buildAnswersFromSelections();
+
     // Calculate results
-    const correctCount = this.answers.filter(answer => answer.isCorrect).length;
-    const wrongCount = this.answers.filter(answer => !answer.isCorrect && !answer.skipped).length;
-    const skippedCount = this.answers.filter(answer => answer.skipped).length;
+    const correctCount = this.answers.filter(a => a && a.isCorrect).length;
+    const wrongCount = this.answers.filter(a => a && !a.isCorrect && !a.skipped).length;
+    const skippedCount = this.answers.filter(a => a && a.skipped).length;
     const score = Math.round((correctCount / this.questions.length) * 100);
 
     // Update completion modal
@@ -496,6 +471,45 @@ export class ExamController {
 
     // Store current result for results page
     Storage.save('currentResult', result);
+  }
+
+  requestEndExam() {
+    // Basic confirmation
+    const confirmMsg = document.documentElement.lang === 'ar'
+      ? 'هل تريد إنهاء الاختبار الآن؟'
+      : 'Do you want to end the exam now?';
+    if (confirm(confirmMsg)) {
+      this.requestFinalizeAndComplete();
+    }
+  }
+
+  requestFinalizeAndComplete() {
+    // Capture time for current question before finishing
+    this.captureTimeSpent();
+    // Build answers and complete
+    this.buildAnswersFromSelections();
+    this.completeExam();
+  }
+
+  buildAnswersFromSelections() {
+    // Build answers array aligned with questions
+    this.answers = this.questions.map((q, index) => {
+      const position = this.tempSelections[index];
+      const option = position ? q.options.find(o => o.position === position) : null;
+      const selectedValue = option ? option.value : null;
+      const isCorrect = option ? option.isCorrect : false;
+      const responseTime = this.timeSpentByIndex[index] || 0;
+      const skipped = !option;
+      return {
+        questionId: q.id,
+        questionIndex: index,
+        selectedAnswer: selectedValue,
+        isCorrect,
+        responseTime,
+        skipped,
+        timestamp: Date.now()
+      };
+    });
   }
 
   /**
