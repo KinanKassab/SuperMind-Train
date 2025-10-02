@@ -33,7 +33,6 @@ export class LeaderboardController {
       // Statistics
       totalTestsEl: document.getElementById('total-tests'),
       averageScoreEl: document.getElementById('average-score'),
-      averageScoreEl: document.getElementById('average-score'),
       totalTimeEl: document.getElementById('total-time'),
       
       // Leaderboard list

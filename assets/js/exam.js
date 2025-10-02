@@ -406,12 +406,13 @@ export class ExamController {
    * Auto submit exam when time runs out
    */
   autoSubmitExam() {
-    // Submit any remaining unanswered questions
+    // Submit any remaining unanswered questions without double-advancing
     while (this.currentIndex < this.questions.length) {
       if (!this.isAnswered) {
-        this.autoSubmitQuestion();
+        this.autoSubmitQuestion(); // advances to next question internally
+      } else {
+        this.nextQuestion();
       }
-      this.nextQuestion();
     }
     
     this.completeExam();

@@ -1,6 +1,6 @@
 // SuperMind Trainer - Main Page Controller
 
-import { Storage, showNotification } from './utils.js';
+import { Storage, showNotification, formatTime } from './utils.js';
 
 /**
  * Main Page Controller
@@ -140,7 +140,7 @@ export class MainController {
     this.populateSettingsForm();
     
     // Hide timer options for training mode
-    const timerGroup = document.querySelector('.form-group:has(#timer-mode)');
+    const timerGroup = document.getElementById('timer-mode')?.closest('.form-group');
     const timerDurationGroup = this.elements.timerDurationGroup;
     
     if (testType === 'training') {
@@ -190,9 +190,9 @@ export class MainController {
    * Toggle timer duration group visibility
    */
   toggleTimerDurationGroup(timerMode) {
-    if (this.elements.timerDurationGroup) {
-      this.elements.timerDurationGroup.style.display = 'block';
-    }
+    if (!this.elements.timerDurationGroup) return;
+    const show = timerMode === 'per-question';
+    this.elements.timerDurationGroup.style.display = show ? 'block' : 'none';
   }
 
   /**
@@ -377,23 +377,11 @@ export class MainController {
     }
 
     if (this.elements.totalTimeEl) {
-      this.elements.totalTimeEl.textContent = this.formatTime(stats.totalTime);
+      this.elements.totalTimeEl.textContent = formatTime(stats.totalTime);
     }
   }
 
-  /**
-   * Format time in hours:minutes format
-   */
-  formatTime(seconds) {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    
-    if (hours > 0) {
-      return `${hours}: ${minutes}`;
-    } else {
-      return `${minutes}`;
-    }
-  }
+  // Using shared formatTime from utils.js for consistency
 }
 
 // Initialize main controller when DOM is loaded

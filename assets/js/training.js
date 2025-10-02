@@ -16,6 +16,7 @@ export class TrainingController {
     this.wrongCount = 0;
     this.startTime = null;
     this.timer = null;
+    this.elapsedIntervalId = null;
     this.settings = this.loadSettings();
     this.isAnswered = false;
     this.questionStartTime = null;
@@ -353,7 +354,11 @@ export class TrainingController {
    * Start elapsed time timer
    */
   startElapsedTimer() {
-    setInterval(() => {
+    if (this.elapsedIntervalId) {
+      clearInterval(this.elapsedIntervalId);
+      this.elapsedIntervalId = null;
+    }
+    this.elapsedIntervalId = setInterval(() => {
       if (this.startTime) {
         const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
         this.elements.elapsedTimeEl.textContent = formatTime(elapsed);
@@ -508,6 +513,10 @@ export class TrainingController {
   startNewTraining() {
     this.elements.completionModalEl.classList.remove('show');
     this.elements.completionModalEl.setAttribute('aria-hidden', 'true');
+    if (this.elapsedIntervalId) {
+      clearInterval(this.elapsedIntervalId);
+      this.elapsedIntervalId = null;
+    }
     this.startTraining();
   }
 

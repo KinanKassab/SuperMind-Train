@@ -349,7 +349,8 @@ export class ResultsController {
    */
   retryTest() {
     const testType = this.currentResult.type;
-    window.location.href = testType === 'training' ? 'assets/html/training.html' : 'exam.html';
+    // From results page (assets/html/), navigate to sibling pages reliably
+    window.location.href = testType === 'training' ? 'training.html' : 'exam.html';
   }
 
   /**

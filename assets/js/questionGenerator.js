@@ -146,6 +146,10 @@ export class QuestionGenerator {
       const tens = Math.floor(n / 10) % 10;
       if (ones === 1 || tens === 1) candidates.push(n);
     }
+    // Guard: if no candidates found (shouldn't happen with current ranges), fallback to random in range
+    if (candidates.length === 0) {
+      return randomInt(range.min, range.max);
+    }
     return candidates[randomInt(0, candidates.length - 1)];
   }
 
@@ -207,9 +211,13 @@ export class QuestionGenerator {
 
     // Use different strategies to generate distractors
     strategies.forEach(strategy => {
-      const distractor = this.applyDistractorStrategy(strategy, correctAnswer, factorA, factorB);
-      if (distractor !== correctAnswer && !distractors.includes(distractor) && distractor >= 0) {
-        distractors.push(distractor);
+      try {
+        const distractor = this.applyDistractorStrategy(strategy, correctAnswer, factorA, factorB);
+        if (Number.isFinite(distractor) && distractor !== correctAnswer && !distractors.includes(distractor) && distractor >= 0) {
+          distractors.push(distractor);
+        }
+      } catch (e) {
+        // Skip faulty strategy without breaking generation
       }
     });
 
@@ -238,7 +246,9 @@ export class QuestionGenerator {
       extreme: ['swap_digits', 'factor_variation', 'complex_math', 'random_close']
     };
 
-    return strategies[difficulty] || strategies.normal;
+    const key = (difficulty || 'medium').toLowerCase();
+    const mapKey = key === 'medium' ? 'normal' : key;
+    return strategies[mapKey] || strategies.normal;
   }
 
   /**
@@ -390,10 +400,13 @@ export class QuestionGenerator {
    * @returns {boolean} True if duplicate
    */
   isDuplicate(question) {
-    return this.questionHistory.some(q => 
-      q.factorA === question.factorA && 
-      q.factorB === question.factorB
-    );
+    const a1 = Math.min(question.factorA, question.factorB);
+    const b1 = Math.max(question.factorA, question.factorB);
+    return this.questionHistory.some(q => {
+      const a2 = Math.min(q.factorA, q.factorB);
+      const b2 = Math.max(q.factorA, q.factorB);
+      return a1 === a2 && b1 === b2;
+    });
   }
 
   /**
@@ -416,8 +429,9 @@ export class QuestionGenerator {
       hard: 30,
       extreme: 25
     };
-    
-    return limits[difficulty] || limits.normal;
+    const key = (difficulty || 'medium').toLowerCase();
+    const mapKey = key === 'medium' ? 'normal' : key;
+    return limits[mapKey] || limits.normal;
   }
 
   /**

@@ -323,11 +323,17 @@ export function exportToCSV(data, filename, headers = []) {
     }
     
     // Add data rows
+    const escapeCell = (value) => {
+      const str = String(value ?? '');
+      const escaped = str.replace(/"/g, '""');
+      return `"${escaped}"`;
+    };
+
     data.forEach(row => {
       if (Array.isArray(row)) {
-        csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
-      } else if (typeof row === 'object') {
-        const values = Object.values(row).map(value => `"${value}"`);
+        csvContent += row.map(cell => escapeCell(cell)).join(',') + '\n';
+      } else if (typeof row === 'object' && row !== null) {
+        const values = Object.values(row).map(value => escapeCell(value));
         csvContent += values.join(',') + '\n';
       }
     });
